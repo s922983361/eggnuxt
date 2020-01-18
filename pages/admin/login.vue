@@ -132,7 +132,7 @@
 
     export default {
         layout: 'empty',
-        // middleware: 'adminIsLogin',
+        middleware: 'admin_IsLogin',
         mixins:[notify],
         data () {
             return {
@@ -203,7 +203,9 @@
                         const res = await this.$store.dispatch('auth/login', this.formData)
                         if(res.reCode === 116200) {
                             //Set Manager into IndexPage
-                            //this.config.afterSavePushTo = res.indexPage
+                            if(res.role_id == '5e2039b544b8d412d0cd7997') this.config.afterSavePushTo = 'managers'
+                            if(res.role_id == '5e2039cd44b8d412d0cd7998') this.config.afterSavePushTo = 'factory_Brands'
+                            if(res.role_id == '5e2039da44b8d412d0cd7999') this.config.afterSavePushTo = 'shop_Orders'
                             return await this.notifyFunc(res.resCode)
                         }
                         //Email or Password ERROR

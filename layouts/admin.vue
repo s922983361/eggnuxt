@@ -28,7 +28,7 @@
     //import breadcrumb from '@/components/admin/layout/breadcrumb'
 
     export default {
-        //middleware: ['adminAuth', 'adminAccess'],
+        middleware: ['admin_Auth', 'admin_Access'],
         data () {
             return {
                 sideBarToggleData: {

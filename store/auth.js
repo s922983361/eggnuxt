@@ -1,7 +1,8 @@
 import { getToken, setToken, removeToken } from '@/plugins/libs/token'
 
 export const state = () => ({
-    token: getToken(),
+    //token: getToken(),
+    token: '',
     id: '',
     role_id: '',
     username: '',
@@ -80,6 +81,8 @@ export const actions = {
     },
     async logout({commit}) {
         //set null to manager.state.token
+        commit('SET_ID', '')
+        commit('SET_ROLE_ID', '')
         commit('SET_TOKEN', '')
         commit('SET_NAME', '')
         commit('SET_AVATAR', '')

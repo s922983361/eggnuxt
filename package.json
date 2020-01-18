@@ -5,7 +5,7 @@
   "author": "jsd",
   "private": true,
   "scripts": {
-    "dev": "cross-env BASE_URL=http://localhost:3000 NODE_ENV=development nodemon server/index.js --watch server",
+    "dev": "cross-env NODE_ENV=development nodemon server/index.js --watch server",
     "build": "nuxt build",
     "start": "cross-env BASE_URL=http://45.34.2.213 NODE_ENV=production node server/index.js",
     "generate": "nuxt generate",

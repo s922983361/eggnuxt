@@ -28,13 +28,13 @@
 
         <ul class="nav-item-group-left inline-flex">             
             <li class="mr-2 pt-1">
-                <div class="text-sm text-white">username</div>
+                <div class="text-sm text-white">{{ $store.state.auth.username }}</div>
                 <span class="text-sm text-white"><i class="el-icon-success text-green-500"></i></span> 
             </li>
             <li class="nav-item">
                 <el-dropdown :hide-on-click="false">
                     <span class="el-dropdown-link">
-                        <img class="w-8 rounded-full border border-white" alt="avatar">
+                        <img :src="$store.state.auth.avatar" class="w-8 rounded-full border border-white" alt="avatar">
                     </span>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item icon="el-icon-bank-card">個人資訊</el-dropdown-item>
@@ -66,16 +66,16 @@
                 this.$emit('sideBarStatusChange', this.toggle);
             },
             async logout() {          
-                // const res = await this.$store.dispatch('auth/logout')                               
-                // if(res){
-                //     this.$notify({
-                //         title: '成功登出!!',
-                //         message: 'Success Logout to System !!',
-                //         type: 'success',
-                //         customClass: 'bg-green-200'
-                //     })
-                //     this.$router.push('/admin')
-                // }
+                const res = await this.$store.dispatch('auth/logout')                               
+                if(res){
+                    this.$notify({
+                        title: '成功登出!!',
+                        message: 'Success Logout to System !!',
+                        type: 'success',
+                        customClass: 'bg-green-200'
+                    })
+                    this.$router.push('/admin/login')
+                }
             }
         },
         components: {},

@@ -1,14 +1,14 @@
 import { showLoading, hideLoading } from './libs/loading'
-//import { getToken } from './util/token'
+import { getToken } from '@/plugins/libs/token'
+
 export default ({ $axios, store, redirect }) => {    
     $axios.interceptors.request.use( config => {        
 		// do something before request is sent
 		config.headers.common['Content-Type'] = 'application/x-www-form-urlencoded; application/json';
-		showLoading()
-		// if(process.client) {
-		// 	config.headers.common['Authorization'] = store.state.auth.token
-		// 	showLoading()//啟動loading讀取中
-		// }
+		if(process.client) {
+			config.headers.common['Authorization'] = store.state.auth.token
+			showLoading()//啟動loading讀取中
+		}
 		// if(process.server) {
 		// 	config.headers.common['Authorization'] = getToken()
 		// 	console.log('服務端請求頭',config.headers.common['Authorization'])

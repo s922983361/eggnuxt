@@ -59,6 +59,7 @@ export default {
                     type: 'error',
                     customClass: 'bg-red-200'
                 })
+                console.log(err)
             } 
         },
         /**
@@ -81,18 +82,22 @@ export default {
                 type: 'warning'
             })
             .then( async () => {
-                const res = await this.$axios.$delete(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${row._id}`)
-                if(res.resCode !== 90500) this.handleDataList()
-                await this.notifyFunc(res.resCode)
+                try {
+                    const res = await this.$axios.$delete(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${row._id}`)
+                    if(res.resCode !== 90500) this.handleDataList()
+                    await this.notifyFunc(res.resCode)
+                }catch (err){
+                    //Browser ERROR                    
+                    this.$message({                        
+                        message: '瀏覽器不明錯誤,請重新操作!!',
+                        type: 'error',
+                        customClass: 'bg-red-200'
+                    })
+                }
+                
             })                
-            .catch( err => {
-                //Browser ERROR
-                //console.log(err)                   
-                this.$message({                        
-                    message: '瀏覽器不明錯誤,請重新操作!!',
-                    type: 'error',
-                    customClass: 'bg-red-200'
-                })
+            .catch(()=> {
+                //Do Something after cancelButton
             })
         },        
         /**
@@ -110,8 +115,7 @@ export default {
         async handleIndexChange (pagination) {
             this.pagination = pagination
             this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
-        },
-        
+        },        
     },
     components: {        
         expandDom: {

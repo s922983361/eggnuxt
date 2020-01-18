@@ -4,7 +4,7 @@ module.exports = {
 	mode: 'universal',
 	env: {
 		//baseUrl: process.env.BASE_URL || 'http://localhost:3000',
-		BASE_URL: process.env.BASE_URL,
+		BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
 		NODE_ENV: process.env.NODE_ENV		
 	},
 	router: {
