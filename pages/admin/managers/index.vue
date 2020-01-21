@@ -15,7 +15,7 @@
 
         @handleSizeChange="handleSizeChange"
         @handleIndexChange="handleIndexChange"
-        @dataRest="handleDataList"
+        @superFetchAll="handleDataList"
     >
     </dataTable>
 </template>
@@ -57,7 +57,18 @@
                         label: '管理員名稱',
                         align: 'left',
                         width: 100,                        
-                    },   
+                    },
+                    {
+                        prop: 'role_id',
+                        label: '所屬角色',
+                        align: 'left',
+                        width: 100, 
+                        render: (h, params) => {
+                            return h('p', {
+                                class: 'font-sans text-gray-800'
+                            }, params.row.role_id.title)
+                        }                       
+                    }, 
                 ],
             };
         },

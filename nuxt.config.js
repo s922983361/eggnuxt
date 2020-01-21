@@ -4,8 +4,9 @@ module.exports = {
 	mode: 'universal',
 	env: {
 		//baseUrl: process.env.BASE_URL || 'http://localhost:3000',
-		BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
-		NODE_ENV: process.env.NODE_ENV		
+		BASE_URL: process.env.BASE_URL,
+		NODE_ENV: process.env.NODE_ENV,
+		IMG_PATH: `${process.env.BASE_URL}/uplods/`		
 	},
 	router: {
 		middleware: []

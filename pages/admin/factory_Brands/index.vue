@@ -1,5 +1,6 @@
 <template>
     <dataTable
+        :imageFolder="imageFolder"
         :listLoading="listLoading"
 
         :page__list="list"
@@ -15,19 +16,20 @@
 
         @handleSizeChange="handleSizeChange"
         @handleIndexChange="handleIndexChange"
-        @dataRest="handleDataList"
+        @superFetchAll="handleDataList"
     >
     </dataTable>
 </template>
 
 <script>
     import dataTable from '@/components/admin/table/dataTable'
-    import basic from '@/plugins/mixins/admin/table/basic'
+    import factory from '@/plugins/mixins/admin/table/factory'
+    import deleteImg from '@/plugins/mixins/admin/edit/deleteImg'
     import notify from '@/plugins/mixins/admin/notify'
 
     export default {
         layout: 'admin',
-        mixins: [basic, notify],
+        mixins: [factory, deleteImg, notify],
         meta: {
             title: '管理員列表'
         },
@@ -36,7 +38,8 @@
                 config: {
                     title:'品牌列表',
                     serverController: 'brand',
-                    afterSavePushTo: 'factory_Brands'//路由名稱
+                    afterSavePushTo: 'factory_Brands',//路由名稱
+                    manager_id: this.$store.state.auth.id,
                 },
                 //props
                 addPushTo: 'factory_Brands',//新增的路由目標
@@ -45,24 +48,44 @@
                 timeFilter: false,//是否需要時間過濾
                 listLoading: false,                
                 list: [],
+                imageFolder: `${process.env.BASE_URL}/uploads/`,
                 columns: [
-                    {
-                        prop: 'name',
-                        label: '品牌名稱',
-                        align: 'left',
-                        width: 100,                        
-                    },                    
                     {
                         prop: 'imageUrl',
                         label: '品牌LOGO',
                         align: 'center',
-                        width: 100,                        
+                        width: 50,
+                        is_image: true //to show image                         
+                    },
+                    {
+                        prop: 'name',
+                        label: '品牌名稱',
+                        align: 'left',
+                        width: 50,                        
+                    },
+                    {
+                        prop: 'manager_id',
+                        label: '所屬廠商',
+                        align: 'left',
+                        width: 100, 
+                        render: (h, params) => {
+                            return h('p', {
+                                class: 'font-sans text-gray-800'
+                            }, params.row.manager_id.name)
+                        }                       
+                    }, 
+                    {
+                        prop: 'create_date',
+                        label: '創建時間',
+                        align: 'center',
+                        width: 50,
+                        sortable: true
                     },   
                 ],
             };
         },
         created() {
-            this.handleDataList()
+            this.roleHandleDataList()
         },
         components: {
             dataTable

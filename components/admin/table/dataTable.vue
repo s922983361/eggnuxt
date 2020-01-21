@@ -16,14 +16,7 @@
             <el-date-picker v-if="page__timeFilter" type="daterange" start-placeholder="起始時間" end-placeholder="結束時間"></el-date-picker>
         </template>
 
-        <template slot="right-field">
-            <el-button 
-                type="primary" 
-                icon="el-icon-refresh" 
-                size="small" 
-                round 
-                @click="dataRest">資料重整
-                </el-button>
+        <template slot="right-field">            
             <el-button                 
                 type="info" 
                 icon="el-icon-printer" 
@@ -44,6 +37,16 @@
                 :loading="downloadLoading"
                 >導出 EXCEL
                 </el-button>
+            <el-button
+                v-if="$store.state.auth.is_super && $route.path === '/admin/factory_Brands' || $route.path === '/admin/factory_Goods'"
+                type="primary" 
+                icon="el-icon-s-grid" 
+                size="small" 
+                round 
+                :loading="downloadLoading"
+                @click="superFetchAll"
+                >列出所有資訊
+                </el-button>    
         </template>
 
         <el-table 
@@ -65,7 +68,7 @@
                     <template slot-scope="scope">
                         <template v-if="!column.render">
                             <template v-if="column.is_image">
-                                <img :src="scope.row[column.prop]" :alt="scope.row[column.label]" style="height:3rem">
+                                <img :src="`${imageFolder}${scope.row[column.prop]}`" :alt="scope.row[column.label]" style="height:3rem; margin:0 auto">
                             </template>
                             <template v-else-if="column.is_color">
                                 <span :style="{background:scope.row[column.prop]}">{{scope.row[column.prop]}}</span>
@@ -143,6 +146,8 @@
             };
         },
         props:{
+            //if this page has image
+            imageFolder: { type: String, default: '' },
             //table data
             page__list:      { type: Array, default:[] },
             page__title:     { type: String, default:'' },
@@ -190,8 +195,8 @@
             } 
         },        
         methods: {
-            dataRest () {
-                this.$emit('dataRest');
+            superFetchAll () {
+                this.$emit('superFetchAll');
             },
             // 切換每頁顯示的數量
             handleSizeChange (size) {

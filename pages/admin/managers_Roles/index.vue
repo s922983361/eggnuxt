@@ -15,7 +15,7 @@
 
         @handleSizeChange="handleSizeChange"
         @handleIndexChange="handleIndexChange"
-        @dataRest="handleDataList"
+        @superFetchAll="handleDataList"
     >
     </dataTable>
 </template>

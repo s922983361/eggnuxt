@@ -27,13 +27,14 @@
                             :headers="getHeader__Func"
                             :before-upload="beforeUploadFile"
                             :on-success="handleFileSuccess"
+                            :on-error="handleFileError"
                             accept="image/png, image/jpeg" 
                             >
                             <!-- <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div> -->
                             <div slot="tip" class="el-upload__tip">
-                                <p><span style="color:#409EFF;">* 點擊 + 上傳圖片</span> 只能上傳 jpg/png 圖片，且不超過500KB</p>                                
+                                <p><span style="color:#409EFF;">* 點擊 + 上傳圖片</span></p>                                
                             </div>                            
-                            <img class="avatar" v-if="model[item.prop]" :src="model[item.prop]">
+                            <img class="avatar" v-if="model[item.prop]" :src="`${imageFolder}${model[item.prop]}`">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
                             </el-upload>
                         </el-form-item>
@@ -160,6 +161,7 @@
             }
         },
         props: {
+            imageFolder: { type: String, default: '' },
             serverController: { type: String, default: '' },
             form__Models: { type: Array, default: [] },
         },
@@ -168,7 +170,7 @@
                 const uploadData = this.form__Models.filter((item) => {
                     return item.type === 'file'
                 })
-                //if(uploadData.length > 0) { return { 'Authorization': this.$store.state.auth.token }}
+                if(uploadData.length > 0) { return { 'Authorization': this.$store.state.auth.token }}
                 //default value
                 return false
             },
@@ -241,7 +243,17 @@
                  */
                 showLoading()
                 const isIMAGE = file.type === 'image/jpeg'||'image/png'
-
+                const maxSize = 500000 //500kb
+                if(file.size > maxSize) {
+                    hideLoading()
+                    this.$notify({
+                        title: 'Info',
+                        type: 'warning',
+                        message: '圖片最大不能超過 500kb',
+                        customClass: 'bg-yellow-200'
+                    })                    
+                    return false
+                }
                 if(!isIMAGE) {
                     hideLoading()
                     this.$notify({
@@ -251,14 +263,14 @@
                         customClass: 'bg-yellow-200'
                     })                    
                     return false
-                }
+                }                
                 /**
                 * imageCompress(file, maxSizeMB, maxWidthOrHeight)
                 * @param {*} file a bold in promise 
                 * @param {*} maxSizeMB the sizeMB of file after cpmpressing (Number/mb default:0.1)
                 * @param {*} maxWidthOrHeight that will be resized maxWidthOrHeight (Number/px default:300) 
                  */
-                
+                                
                 return file = this.$imgCompress(file)
             },
             handleFileSuccess(res) {
@@ -266,30 +278,32 @@
                  * @desc element-ui el-upload component hook
                  * **Do not use async function important!!**
                  */
-                hideLoading()                
-                if(!this.$_.isEmpty(res)) {
-                    //Server ERROR 
-                    res.statusCode === 90500 && this.notifyFunc(res, 'error', 'bg-red-200')
-                    //Success 
-                    if(res.statusCode === 90200) {                        
-                        this.notifyFunc(res, 'success', 'bg-green-200')
-                        //vue $set
-                        //this.$set(this.model, 'imageUrl', res.file.url)
-                        this.model['imageUrl'] = res.file.url
-                        return 
-                    }
-                }              
+                hideLoading()
+                this.model['imageUrl'] = res.file.url             
             },
+            handleFileError(err) {
+                /**
+                 * @desc element-ui el-upload component hook
+                 * **Do not use async function important!!**
+                 */
+                hideLoading()
+                this.$notify({
+                    title: 'Info',
+                    type: 'error',
+                    message: '沒有權限!',
+                    customClass: 'bg-red-200'
+                })
+            }
         },
         components: {
             viewPage
         }
-    }
-
+    }    
 </script>
+
 <style scoped>
 .avatar-uploader .el-upload {
-    border: 1px dashed #000;
+    
     border-radius: 6px;
     cursor: pointer;
     position: relative;
@@ -299,6 +313,7 @@
     border-color: #409EFF;
 }
 .avatar-uploader-icon {
+    border: 1px dashed #000;
     font-size: 28px;
     color: #8c939d;
     width: 108px;

@@ -1,6 +1,7 @@
 <template>
     <el-menu
-        default-active="/admin/managers"
+        :default-active="$route.path"
+        
         :router="true"
         :unique-opened="true"
         class="el-menu-vertical-demo"
@@ -66,7 +67,7 @@
         </el-submenu>
         <!-- 經銷商功能配置 -->
         <!------------------------------------------------------------------ 廠商功能 -->
-        <el-submenu index="10" v-if="$store.state.auth.is_super || $store.state.auth.role_id === '5e2039cd44b8d412d0cd7998'"> 
+        <el-submenu index="10" v-if="$store.state.auth.is_super || $store.state.auth.role_id === '5e26bc3ae21f282188d5acad'"> 
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#0019ff"></i>
                 <span style="color:#ffffff">廠商功能</span>
@@ -84,7 +85,7 @@
         </el-submenu>
         <!-- 廠商功能 -->
         <!------------------------------------------------------------------ 經銷商功能 -->    
-        <el-submenu index="11" v-if="$store.state.auth.is_super || $store.state.auth.role_id === '5e2039da44b8d412d0cd7999'">
+        <el-submenu index="11" v-if="$store.state.auth.is_super || $store.state.auth.role_id === '5e26d76cd89fec0f500c3cc0'">
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#4bdbf2"></i>
                 <span style="color:#ffffff">經銷商功能</span>
@@ -111,7 +112,7 @@
         computed: {
             sideBarToggle() {
                 return this.isCollapse = this.Collapse
-            } 
+            },
         },
         methods: { 
         }

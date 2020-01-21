@@ -34,10 +34,11 @@ export default ({ $axios, store, redirect }) => {
 		//console.log(response);            
 		return response    
 	}, err => {      
-		if (err && err.response) {         
+		if (err && err.response) { 
+			if(process.client) hideLoading()//關閉loading讀取完畢  
 			switch (err.response.status) {              
 				case 400: err.message = '請求錯誤(400)'; break;              
-				//case 401: return history.push('/admin/register'); break;
+				case 401: return history.push('/admin/login'); break;
 				case 401: err.message = '未經驗證(401)'; break;              
 				case 403: err.message = '拒絕訪問(403)'; break;              
 				case 404: err.message = '請求出錯(404)'; break;              
@@ -53,15 +54,12 @@ export default ({ $axios, store, redirect }) => {
 		} else {          
 			err.message = '連接服務器失敗!'      
         }
-        
-        if(process.client) hideLoading()//關閉loading讀取完畢        
 		return Promise.reject(err);    
 	})
 
     $axios.onError( error => {
         const code = parseInt(error.response && error.response.status)
-        if (code === 400) {
-            redirect('/400')
-        }
+		if (code === 400)  redirect('/400')
+		if (code === 404)  hideLoading()
     })
 }

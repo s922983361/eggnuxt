@@ -137,7 +137,7 @@
         data () {
             return {
                 config: {
-                    afterSavePushTo: 'managers'
+                    afterSavePushTo: ''
                 },
                 formData: {
                     email: '',
@@ -201,11 +201,13 @@
                     const checkCapcha = await this.$axios.$post(`${process.env.BASE_URL}/api/common/captcha`, this.formData)
                     if(checkCapcha.isMatch) {
                         const res = await this.$store.dispatch('auth/login', this.formData)
-                        if(res.reCode === 116200) {
+
+                        if(res.resCode === 116200) {
                             //Set Manager into IndexPage
-                            if(res.role_id == '5e2039b544b8d412d0cd7997') this.config.afterSavePushTo = 'managers'
-                            if(res.role_id == '5e2039cd44b8d412d0cd7998') this.config.afterSavePushTo = 'factory_Brands'
-                            if(res.role_id == '5e2039da44b8d412d0cd7999') this.config.afterSavePushTo = 'shop_Orders'
+                            if(res.role_id === '5e2039b544b8d412d0cd7997') this.config.afterSavePushTo = 'managers'
+                            if(res.role_id === '5e26bc3ae21f282188d5acad') this.config.afterSavePushTo = 'factory_Brands'
+                            if(res.role_id === '5e26d76cd89fec0f500c3cc0') this.config.afterSavePushTo = 'shop_Orders'
+                            
                             return await this.notifyFunc(res.resCode)
                         }
                         //Email or Password ERROR
