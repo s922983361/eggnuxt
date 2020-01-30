@@ -40,7 +40,7 @@ export default {
          * @param {*} pageIndex nunber default:1, table index page 
          * @param {*} pageSize nunber default:20, the count of data in table list
          */
-        async handleDataList(pageIndex = 1, pageSize = 20) {
+        async handleDataList(pageIndex = 1, pageSize = 20) {            
             try {
                 //res return obj
                 const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${pageIndex}/${pageSize}`)
@@ -113,7 +113,7 @@ export default {
                 try {
                     const res = await this.$axios.$delete(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${row._id}/${this.$store.state.auth.id}`)
                     
-                    if(res.resCode !== 90500) this.handleDataList()
+                    if(res.resCode !== 90500) this.roleHandleDataList()
                     if(!this.$_.isEmpty(row.imageUrl)) await this.deletImg(row.imageUrl)
                     await this.notifyFunc(res.resCode)
                 }catch (err){

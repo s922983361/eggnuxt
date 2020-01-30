@@ -5,6 +5,7 @@ export const state = () => ({
     token: '',
     id: '',
     role_id: '',
+    role_title: '',
     username: '',
     avatar: '',
     is_super:'',
@@ -22,6 +23,9 @@ export const mutations = {
     },
     SET_ROLE_ID(state, role_id) {
         state.role_id = role_id
+    },
+    SET_ROLE_TITLE(state, role_title) {
+        state.role_title = role_title
     },
     SET_NAME(state, name) {
         state.username = name
@@ -53,7 +57,8 @@ export const actions = {
                 commit('SET_LOGGEIN')
                 //set user detail Data
                 commit('SET_ID', res.id)
-                commit('SET_ROLE_ID', res.role_id)
+                commit('SET_ROLE_ID', res.role_id._id)
+                commit('SET_ROLE_TITLE', res.role_id.title)
                 commit('SET_NAME', res.name)
                 commit('SET_AVATAR', res.avatar)
                 commit('SET_ISSUPER', res.is_super)

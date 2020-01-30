@@ -34,22 +34,30 @@
             </el-menu-item-group>
         </el-submenu>
         <!-- 管理員功能配置 -->
-        <!------------------------------------------------------------------ 廠商功能配置 -->
+        <!------------------------------------------------------------------ 商品配置 -->
         <el-submenu index="2" v-if="$store.state.auth.is_super">        
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#00ff3b"></i>
-                <span style="color:#ffffff">廠商功能配置</span>
+                <span style="color:#ffffff">商品配置</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item index="/admin/login">                
-                    <i class="el-icon-tickets"></i>
-                    <span slot="title">管理員資訊</span>                                
-                </el-menu-item>           
+                <el-menu-item index="/admin/goods_Colors">                
+                    <i class="el-icon-magic-stick"></i>
+                    <span slot="title">商品顏色 (goodscolor)</span>                                
+                </el-menu-item>                 
+                <el-menu-item index="/admin/goods_Types">                
+                    <i class="el-icon-price-tag"></i>
+                    <span slot="title">商品類型 (goodstype)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/goods_Cates">                
+                    <i class="el-icon-collection-tag"></i>
+                    <span slot="title">商品分類 (goodscate)</span>                                
+                </el-menu-item>
                 
 
             </el-menu-item-group>
         </el-submenu>
-        <!-- 廠商功能配置 -->
+        <!-- 商品配置 -->
         <!------------------------------------------------------------------ 經銷商功能配置 -->
         <el-submenu index="3" v-if="$store.state.auth.is_super">        
             <template slot="title">
@@ -67,7 +75,7 @@
         </el-submenu>
         <!-- 經銷商功能配置 -->
         <!------------------------------------------------------------------ 廠商功能 -->
-        <el-submenu index="10" v-if="$store.state.auth.is_super || $store.state.auth.role_id === '5e26bc3ae21f282188d5acad'"> 
+        <el-submenu index="10" v-if="$store.state.auth.is_super || $store.state.auth.role_title === '廠商'"> 
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#0019ff"></i>
                 <span style="color:#ffffff">廠商功能</span>
@@ -78,14 +86,14 @@
                     <span slot="title">品牌列表 (brands)</span>                                
                 </el-menu-item>
                 <el-menu-item index="/admin/factory_Goods">                
-                    <i class="el-icon-goods"></i>
+                    <i class="el-icon-goods"></i>                    
                     <span slot="title">商品列表 (goods)</span>                                
                 </el-menu-item>
             </el-menu-item-group>
         </el-submenu>
         <!-- 廠商功能 -->
         <!------------------------------------------------------------------ 經銷商功能 -->    
-        <el-submenu index="11" v-if="$store.state.auth.is_super || $store.state.auth.role_id === '5e26d76cd89fec0f500c3cc0'">
+        <el-submenu index="11" v-if="$store.state.auth.is_super || $store.state.auth.role_title === '經銷商'">
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#4bdbf2"></i>
                 <span style="color:#ffffff">經銷商功能</span>
@@ -112,7 +120,7 @@
         computed: {
             sideBarToggle() {
                 return this.isCollapse = this.Collapse
-            },
+            },            
         },
         methods: { 
         }

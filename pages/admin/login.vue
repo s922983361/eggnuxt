@@ -132,6 +132,7 @@
 
     export default {
         layout: 'empty',
+        name: 'login',
         middleware: 'admin_IsLogin',
         mixins:[notify],
         data () {
@@ -204,9 +205,9 @@
 
                         if(res.resCode === 116200) {
                             //Set Manager into IndexPage
-                            if(res.role_id === '5e2039b544b8d412d0cd7997') this.config.afterSavePushTo = 'managers'
-                            if(res.role_id === '5e26bc3ae21f282188d5acad') this.config.afterSavePushTo = 'factory_Brands'
-                            if(res.role_id === '5e26d76cd89fec0f500c3cc0') this.config.afterSavePushTo = 'shop_Orders'
+                            if(res.role_id.title === '網站管理員') this.config.afterSavePushTo = 'managers'
+                            if(res.role_id.title === '廠商') this.config.afterSavePushTo = 'factory_Brands'
+                            if(res.role_id.title === '經銷商') this.config.afterSavePushTo = 'shop_Orders'
                             
                             return await this.notifyFunc(res.resCode)
                         }

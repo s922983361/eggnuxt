@@ -52,15 +52,27 @@ module.exports = {
 	** Nuxt.js dev-modules
 	*/
 	buildModules: [
-		'@nuxtjs/tailwindcss'
+		'@nuxtjs/tailwindcss',
+		'@nuxtjs/fontawesome'
 	],
+	//tailwindcss setting
 	purgeCSS: {
 		//保留elment-ui的樣式
 		whitelistPatternsChildren: [/^el-/],
 		//刪除沒用到的animate.css
 		keyframes: true
 	},
-
+	//fontawesome setting
+	fontawesome: {
+		component: 'fa',
+		suffix: true,
+		//list the icons you want to add, not listed icons will be tree-shaked
+		icons: {
+			//Which icons you will use. FontAwesome currently supports 5 icon styles of which 2 are freely available.
+			solid: ['faHome','faHeart'],
+			brands: []
+		}
+	},
 	/*
 	** Nuxt.js modules
 	*/
@@ -70,6 +82,15 @@ module.exports = {
 		'@nuxtjs/pwa',
 		// Doc: https://github.com/nuxt-community/dotenv-module
 		'@nuxtjs/dotenv',
+		'@nuxtjs/toast',
+		'@nuxtjs/sitemap',
+		'@nuxtjs/robots',
+		'nuxt-vuex-router-sync',
+		'nuxt-imagemin',
+		'nuxt-webfontloader',
+		'nuxt-maintenance-mode',
+		'nuxt-mq',
+		'@tui-nuxt/editor',
 	],
 
 	/*
@@ -79,7 +100,106 @@ module.exports = {
 	axios: {
 		//baseURL: process.env.BASE_URL,
 		retry: { retries: 3 },
-	},	
+	},
+
+	/*
+	** Toast module configuration
+	** See https://www.npmjs.com/package/@nuxtjs/toast
+	*/
+	toast: {
+		position: 'top-center',
+		register: [ // Register custom toasts
+			{
+				name: 'my-error',
+				message: 'Oops...Something went wrong',
+				options: {
+					type: 'error'
+				}
+			}
+		]
+	},
+
+	/*
+	** Sitemap module configuration
+	** See https://www.npmjs.com/package/@nuxtjs/sitemap
+	*/
+	sitemap: {
+		hostname: 'https://stationeryhub.net',
+		gzip: true,
+		exclude: [
+			'/secret',
+			'/admin/**'
+		]
+	},
+
+	/*
+	** Robots module configuration
+	** See https://www.npmjs.com/package/@nuxtjs/robots
+	*/
+	robots: {
+		UserAgent: '*',
+		Disallow: '/'
+	},
+
+	/*
+	** Imagemin module configuration
+	** See https://www.npmjs.com/package/nuxt-imagemin
+	*/
+	imagemin: {
+		optipng: { optimizationLevel: 5 },
+		gifsicle: { optimizationLevel: 2 }
+	},
+
+	/*
+	** Webfontloader module configuration
+	** See https://www.npmjs.com/package/nuxt-webfontloader
+	*/
+	webfontloader: {
+		google: {
+		  	families: ['Lato:400,700'] //Loads Lato font with weights 400 and 700
+		}
+	},
+
+	/*
+	** Maintenance mode module configuration
+	** See https://www.npmjs.com/package/nuxt-maintenance-mode
+	*/
+	maintenance: {
+		enabled: !!(process.env.MAINTENANCE_MODE), // If given truthy value, activation maintenance mode on startup your nuxt application.
+		path: '/maintenance', // maintenance fallback content routing.
+		matcher: /^\/admin/ // Path to be in maintenance mode (regex).
+	},
+
+	/*
+	** Mq module configuration
+	** See https://www.npmjs.com/package/nuxt-mq
+	*/
+	mq: {
+		defaultBreakpoint: "desktop",
+		breakpoints: {
+			mobile: 768,
+			tablet: 1024,
+			desktop: 1400,
+			desktopWide: 2000,
+			desktopUltraWide: Infinity
+		}
+	},
+
+	/*
+	** Toast UI Editor module configuration
+	** See https://github.com/tui-nuxt/editor#%EF%B8%8Feditor
+	*/
+	tui: {
+		editor: {
+			stylesheet: {
+				editor: 'tui-editor/dist/tui-editor.min.css',
+				contents: 'tui-editor/dist/tui-editor-contents.min.css',
+				codemirror: 'codemirror/lib/codemirror.css',
+				codeHighlight: 'highlight.js/styles/github.css',
+				colorPicker: 'tui-color-picker/dist/tui-color-picker.min.css'
+			}
+		}
+	},
 	/*
 	** Build configuration
 	*/

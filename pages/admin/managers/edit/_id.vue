@@ -16,12 +16,12 @@
 <script>
     import formEdit from '@/components/admin/form/formEdit'
     import notify from '@/plugins/mixins/admin/notify'
-    import save from '@/plugins/mixins/admin/edit/save'
+    import basic_save from '@/plugins/mixins/admin/edit/basic_save'
     import getSelectList from '@/plugins/mixins/admin/edit/getSelectList'
 
     export default {
         layout: 'admin',
-        mixins: [ notify, save, getSelectList ],
+        mixins: [ notify, basic_save, getSelectList ],
         data () {
             return {
                 config : {

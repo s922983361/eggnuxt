@@ -37,7 +37,17 @@
                 }
             }
         },
-        computed: {},
+        computed: {
+            faHome() {
+                return faHome
+            },
+            faHeart() {
+                return faHeart
+            },
+            faBullhorn() {
+                return faBullhorn
+            }
+        },
         methods: {
             sideBarStatusChange(data) {
                 this.sideBarToggleData.sidebar = data.sidebar

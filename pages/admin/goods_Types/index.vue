@@ -27,23 +27,23 @@
     import notify from '@/plugins/mixins/admin/notify'
 
     import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
-    
+
     export default {
         layout: 'admin',
-        mixins: [basic, notify, changeStatus],
+        mixins: [basic, changeStatus, notify],
         meta: {
-            title: '管理員角色列表'
+            title: '管理員列表'
         },
         data () {
             return {
                 config: {
-                    title:'管理員角色列表',
-                    serverController: 'role',
-                    modelName: 'Role',
-                    afterSavePushTo: 'managers_Roles'//路由名稱
+                    title:'商品類型列表',
+                    serverController: 'goodsType',
+                    modelName: 'GoodsType',
+                    afterSavePushTo: 'goods_Types'//路由名稱
                 },
                 //props
-                addPushTo: 'managers_Roles',//新增的路由目標
+                addPushTo: 'goods_Types',//新增的路由目標
                 statusFilter: false,//是否需要狀態過濾
                 statusArray:[],//狀態的內容--狀態過濾使用,要依照status順序排列
                 timeFilter: false,//是否需要時間過濾
@@ -51,22 +51,22 @@
                 list: [],
                 columns: [
                     {
-                        prop: '_id',
-                        label: '管理員角色id',
-                        align: 'left',
-                        width: 100,                        
-                    },                    
-                    {
-                        prop: 'title',
-                        label: '管理員角色名稱',
+                        prop: 'name',
+                        label: '類型名稱',
                         align: 'left',
                         width: 100,                        
                     },
                     {
+                        prop: 'description',
+                        label: '類型描述',
+                        align: 'left',
+                        width: 200,                        
+                    },
+                    {
                         prop: 'status',
-                        label: '狀態',
+                        label: '是否啟用',
                         align: 'center',
-                        width:  50,
+                        width: 70,
                         render: (h, params) => {
                             return h('fa-icon', {
                                 props:{
@@ -86,20 +86,25 @@
                                     }
                                 },
                             },)
-                        }
+                        }                       
                     },
-                    
+                    {
+                        prop: 'create_date',
+                        label: '創建日期',
+                        align: 'center',
+                        width: 100,
+                        sortable: true
+                    }, 
                 ],
-                
                 operates: {                    
                     list: [ 
                         {
-                            label: '權限',
+                            label: '屬性列表',
                             type: 'info',
                             icon: 'el-icon-setting',
                             plain: true,                            
                             method: (row) => {
-                                this.handleAuth(row)
+                                this.handleAttrs(row)
                             }
                         },
                         {
@@ -125,10 +130,7 @@
                 },
             };
         },
-        created() {
-            this.handleDataList()
-        },
-        computed:{
+        computed: {
             faCheckCircle() {
                 return faCheckCircle
             },
@@ -136,10 +138,13 @@
                 return faTimesCircle
             },
         },
+        created() {
+            this.handleDataList()
+        },
         methods: {
-            async handleAuth (row) {
-                this.$router.push(`/admin/managers_Roles/auth/${row._id}`)
-            }
+            async handleAttrs (row) {
+                this.$router.push(`/admin/goods_Types/attrs/${row._id}`)
+            },            
         },
         components: {
             dataTable
@@ -148,5 +153,4 @@
 
 </script>
 <style scoped>
-
 </style>

@@ -5,7 +5,6 @@
         </header>
         <div class="w-full mt-10">
             <formEdit
-                :imageFolder=config.imageFolder
                 :serverController=config.serverController
                 :form__Models=formModels
                 @editData="save"
@@ -17,52 +16,51 @@
 <script>
     import formEdit from '@/components/admin/form/formEdit'
     import notify from '@/plugins/mixins/admin/notify'
-    import factory_save from '@/plugins/mixins/admin/edit/factory_save'
-    import deleteImg from '@/plugins/mixins/admin/deleteImg'
+    import basic_save from '@/plugins/mixins/admin/edit/basic_save'
     import getSelectList from '@/plugins/mixins/admin/edit/getSelectList'
 
     export default {
         layout: 'admin',
-        mixins: [ notify, factory_save, deleteImg, getSelectList ],
+        mixins: [ notify, basic_save, getSelectList ],
         data () {
             return {
                 config : {
-                    pageTitle: '品牌名稱及LOGO',
-                    serverController: 'brand',
-                    //relatedModel: ['Role'],
-
-                    afterSavePushTo: 'factory_Brands',//路由名稱
-                    uploadImage: true,
-                    imageFolder: `${process.env.BASE_URL}/uploads/`,                    
+                    pageTitle: '商品類型顏色',
+                    serverController: 'goodsType',
+                    //relatedController: ['Role'],
+                    afterSavePushTo: 'goods_Types',//路由名稱
+                    uploadImage: false,
                 },
 
                 formModels: [
                     {                        
-                        label: '上傳LOGO:',
-                        prop: 'imageUrl',
-                        type: 'file',
-                        action: '/api/admin/upload', //sever API
-                        listType: 'picture', //['text', 'picture', 'picture-card']
-                        position: 'response-full',//['response-left', 'response-right', 'response-full']
-                        data: {
-                            uploadFile : 'brandLogo'//custom pic dirName
-                        },
-                        autoUpload: true,
-                        showFileList: false,
-                        multiple: false,
-                        limit: 1, //Number: have to set value if 'multiple' is true                        
-                    },
-                    {                        
-                        label: '品牌名稱:',
+                        label: '名稱:',
                         prop: 'name',
                         type: 'input',
-                        placeholder: '輸入管理員名稱',
+                        placeholder: '輸入類型名稱',
                         position: 'response-left',//['response-left', 'response-right', 'response-full']
                         disabled: false,
                         rules:[
-                            { required: true, message: '品牌名稱必須填寫', trigger: 'blur' },
+                            { required: true, message: '類型名稱必須填寫', trigger: 'blur' },
                             { max: 50, message: '太長(50個字)', trigger: 'blur' },
                         ]
+                    },
+                    {                        
+                        label: '狀態:',
+                        prop: 'status',
+                        type: 'switch',
+                        active: 0,    //value of active
+                        inactive: 1,  //value of inactive
+                        position: 'response-left',//['response-left', 'response-right', 'response-full']
+                        disabled: false,                        
+                    },
+                    {                        
+                        label: '描述:',
+                        prop: 'description',
+                        type: 'textarea',
+                        placeholder: '簡單描述',
+                        position: 'response-full',//['response-left', 'response-right', 'response-full']
+                        disabled: false                        
                     },
                     {                        
                         label: '創建時間:',
@@ -83,9 +81,9 @@
                 ],
             };
         },
-        created() {            
+        created() {
             // find Role List
-            //this.getSelectList('role_id', this.config.relatedModel[0], 'title')
+            //this.getSelectList('role_id', this.config.relatedController[0], 'title')
         },
         components: {
             formEdit

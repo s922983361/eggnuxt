@@ -24,7 +24,7 @@
 <script>
     import dataTable from '@/components/admin/table/dataTable'
     import factory from '@/plugins/mixins/admin/table/factory'
-    import deleteImg from '@/plugins/mixins/admin/edit/deleteImg'
+    import deleteImg from '@/plugins/mixins/admin/deleteImg'
     import notify from '@/plugins/mixins/admin/notify'
 
     export default {

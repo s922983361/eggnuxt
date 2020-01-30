@@ -67,7 +67,7 @@
                         :key="item.prop"
                         :rules="item.rules"
                         >
-                        <el-input :type="item.type" v-model.trim="model[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func"></el-input>
+                        <el-input :type="item.type" v-model="model[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func"></el-input>
 
                         </el-form-item>
                     <el-form-item
@@ -139,7 +139,7 @@
             </template>
         </viewPage>    
         <el-form-item>
-            <el-button type="primary" @click="submitForm('Form')">{{ $route.params.id ? `編輯` : `新增`}}</el-button>
+            <el-button type="primary" @click="submitForm('Form')">{{ $route.params.id || $route.params.attrId ? `編輯` : `新增`}}</el-button>
             <el-button @click="resetForm('Form')">重置</el-button>
         </el-form-item>
     </el-form>
@@ -187,6 +187,18 @@
             //_id.vue : To fetch Data first if ID is exsist after mounted 
             if(!this.$_.isEmpty(this.$route.params.id)) {
                 this.fetchDetail(this.serverController, this.$route.params.id)
+                .then(data =>{
+                    this.model = data
+                    //pass Data to parent component
+                    !this.$_.isEmpty(this.model.imageUrl) && this.$emit('getImageFileName', this.model.imageUrl)                    
+                })
+                .catch( err =>{
+                    this.$message.error('500 服務器錯誤!, 數據導入失敗!');
+                })
+            }
+            //_id.vue : To fetch Data first if ID is exsist after mounted 
+            if(!this.$_.isEmpty(this.$route.params.attrId)) {
+                this.fetchDetail(this.serverController, this.$route.params.attrId)
                 .then(data =>{
                     this.model = data
                     //pass Data to parent component

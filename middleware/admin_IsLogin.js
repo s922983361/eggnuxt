@@ -6,17 +6,17 @@ export default async ({ store, redirect }) => {
 
     if(store.state.auth.loggedIn === true) {
 
-        const roleId = store.state.auth.role_id
-        switch (roleId) {
-            case '5e2039b544b8d412d0cd7997':
+        const roleTitle = store.state.auth.role_title
+        switch (roleTitle) {
+            case '網站管理員':
             redirect('/admin/managers')
             break
 
-            case '5e26bc3ae21f282188d5acad':
+            case '廠商':
             redirect('/admin/factory_Brands')
             break
 
-            case '5e26d76cd89fec0f500c3cc0':
+            case '經銷商':
             redirect('/admin/shop_Orders')
             break
         }

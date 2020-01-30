@@ -6,7 +6,7 @@ export default async ({ store, route , redirect}) => {
      */    
     
     let ACCESS = false
-    let regex = new RegExp( /\w{24}/, 'i')
+    let regex = new RegExp( /\w{24}/, 'g')
     //replace /id to /':id'
     const PATH = route.path.replace(regex, 'id')
     store.state.auth.access.indexOf(PATH) === -1 ? ACCESS = false :  ACCESS = true
