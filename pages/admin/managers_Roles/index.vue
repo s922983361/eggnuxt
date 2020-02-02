@@ -126,7 +126,7 @@
             };
         },
         created() {
-            this.handleDataList()
+            this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
         },
         computed:{
             faCheckCircle() {

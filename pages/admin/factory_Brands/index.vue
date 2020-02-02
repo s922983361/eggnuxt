@@ -40,6 +40,7 @@
                     serverController: 'brand',
                     afterSavePushTo: 'factory_Brands',//路由名稱
                     manager_id: this.$store.state.auth.id,
+                    superAdminOpen: false
                 },
                 //props
                 addPushTo: 'factory_Brands',//新增的路由目標
@@ -85,7 +86,7 @@
             };
         },
         created() {
-            this.roleHandleDataList()
+            this.roleHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
         },
         components: {
             dataTable

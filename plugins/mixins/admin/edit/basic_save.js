@@ -1,6 +1,15 @@
 export default {
     methods: {
-        async save(editData) { 
+        async save(editData) {
+            //image filed 'imageUrl' is exist
+            if(this.config.uploadImage === true && this.$_.isEmpty(editData.imageUrl)) {
+                this.$notify({
+                    message: '圖片尚未上傳',
+                    type: 'error',
+                    customClass: 'bg-red-200'
+                })
+                return
+            }
             //extend
             if(!this.$_.isEmpty(this.$route.params.typeId)){ editData.goodsType_id = this.$route.params.typeId }
             
@@ -20,7 +29,8 @@ export default {
                     this.$router.replace('/admin/login')
                     return this.$store.dispatch('auth/logout')
                 }
-
+                // delete old image
+                if(!this.$_.isEmpty(res.imageUrl)) await this.deletImg(res.imageUrl)
                 await this.notifyFunc(res.resCode)
 
             }catch(err){

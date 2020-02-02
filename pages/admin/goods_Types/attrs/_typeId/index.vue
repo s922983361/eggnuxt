@@ -110,7 +110,7 @@
             },
         },
         created() {
-            this.handleDataList()
+            this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
             this.fetchGoodsTypeDetail()
         },
         methods: {
@@ -120,7 +120,7 @@
              * @param {*} pageIndex nunber default:1, table index page 
              * @param {*} pageSize nunber default:20, the count of data in table list
              */
-            async handleDataList(pageIndex = 1, pageSize = 20) {
+            async handleDataList(pageIndex, pageSize) {
                 try {
                     //res return obj
                     const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${this.$route.params.typeId}/${pageIndex}/${pageSize}`)
@@ -128,6 +128,7 @@
                     if(res.resCode !== 90500) {
                         this.list = res.data
                         this.total = res.total
+                        this.$store.dispatch('admin/resetPagination')
                         return
                     }
                     await this.notifyFunc(res.resCode)

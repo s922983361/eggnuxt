@@ -1,5 +1,5 @@
 /**
- * @desc common mixin in All Admin Table List Component
+ * @desc common mixin in factory Table List Component
  */
 export default {
     data() {
@@ -36,14 +36,43 @@ export default {
     },
     methods: {
         /**
-         * @desc use $axios to fetch data from database
+         * @desc "Super Admin" use $axios to fetch  All data from database
          * @param {*} pageIndex nunber default:1, table index page 
          * @param {*} pageSize nunber default:20, the count of data in table list
          */
-        async handleDataList(pageIndex, pageSize) {
+        async handleDataList( pageIndex, pageSize) { 
+            this.config.superAdminOpen = true
             try {
                 //res return obj
                 const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${pageIndex}/${pageSize}`)
+
+                if(res.resCode !== 90500) {
+                    this.list = res.data
+                    this.total = res.total
+                    this.$store.dispatch('admin/resetPagination')
+                    return
+                }
+                await this.notifyFunc(res.resCode)
+            }
+            catch(err) {
+                 //Browser ERROR 
+                this.$message({                        
+                    message: '瀏覽器不明錯誤,請重新操作!!',
+                    type: 'error',
+                    customClass: 'bg-red-200'
+                })
+                console.log(err)
+            } 
+        },
+        /**
+         * @desc Every "Brand" use $axios to fetch data from database
+         * @param {*} pageIndex nunber default:1, table index page 
+         * @param {*} pageSize nunber default:20, the count of data in table list
+         */
+        async brandHandleDataList(pageIndex, pageSize) {
+            try {
+                //res return obj
+                const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${this.config.brand_id}/${pageIndex}/${pageSize}`)
 
                 if(res.resCode !== 90500) {
                     this.list = res.data
@@ -80,25 +109,21 @@ export default {
          */
         handleDel (row) {
             let tips = ''
-            let type = 'warning'
-            if(this.config.serverController === 'goodsCate'){
-                tips = '如果您的分類已經建立過相關子分類, 刪除此分類將會一併刪除相關的所有子分類, 確定要刪除?'
-                type = 'error'
-            }
-
-            this.$confirm(`是否刪除 "${ row.name || row.title || row.module_name }"? ${tips}`, '提示', {
+                        
+            this.$confirm(`是否刪除 "${row.name ? row.name : row.title }"? ${tips}`, '提示', {
                 confirmButtonText: '確定',
                 cancelButtonText: '取消',
-                type: type
+                type: 'error'
             })
             .then( async () => {
                 try {
                     const res = await this.$axios.$delete(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${row._id}`)
-                    if(res.resCode !== 90500) this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
+                    
+                    if(res.resCode !== 90500) this.brandHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
                     if(!this.$_.isEmpty(row.imageUrl)) await this.deletImg(row.imageUrl)
                     await this.notifyFunc(res.resCode)
                 }catch (err){
-                    //Browser ERROR                    
+                    //Browser ERROR
                     this.$message({                        
                         message: '瀏覽器不明錯誤,請重新操作!!',
                         type: 'error',
@@ -117,7 +142,10 @@ export default {
          */
         async handleSizeChange (pagination) {
             this.pagination = pagination
-            this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
+            if(this.config.superAdminOpen === true){
+                return this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)    
+            }
+            this.brandHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
         }, 
         /**
         * @desc toggle which page to show
@@ -125,7 +153,10 @@ export default {
         */
         async handleIndexChange (pagination) {
             this.pagination = pagination
-            this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
+            if(this.config.superAdminOpen === true){
+                return this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)    
+            }
+            this.brandHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
         },        
     },
     components: {        

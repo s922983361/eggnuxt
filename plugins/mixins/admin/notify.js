@@ -89,6 +89,14 @@ export default {
                 185200 : '185200 Success To Delete GoodsTypeAttr !!',
                 185500 : '185500 Failed To Delete GoodsTypeAttr Data !!',
             
+                191200 : '191200 Success To Add Goods !!',
+                191500 : '191500 Failed To Add Goods !!',
+                192200 : '192200 Success To Update Goods !!',
+                192500 : '192500 Failed To Update Goods !!',
+                193500 : '193500 Failed To Fetch Goods Data List!!',
+                195200 : '195200 Success To Delete Goods !!',
+                195500 : '195500 Failed To Delete Goods Data !!',
+            
             
             
                 991200 : '991200 Success To Add Data!!',
@@ -178,6 +186,14 @@ export default {
                 183500 : '發生錯誤,獲取商品類型屬性列表失敗! 請聯絡系統管理員',
                 185200 : '刪除該商品類型屬性成功!',
                 185500 : '發生錯誤,刪除商品類型屬性數據失敗! 請聯絡系統管理員',
+            
+                191200 : '增加商品成功!',
+                191500 : '發生錯誤,增加商品失敗! 請聯絡系統管理員',
+                192200 : '更新商品成功!',
+                192500 : '發生錯誤,更新商品失敗! 請聯絡系統管理員',
+                193500 : '發生錯誤,獲取商品列表失敗! 請聯絡系統管理員',
+                195200 : '刪除該商品成功!',
+                195500 : '發生錯誤,刪除商品數據失敗! 請聯絡系統管理員',
                 
             
             

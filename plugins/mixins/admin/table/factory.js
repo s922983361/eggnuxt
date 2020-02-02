@@ -29,8 +29,8 @@ export default {
             },
             total: 0,/**數據總數量 default:0 */ 
             pagination: {
-                pageIndex: 1,/**第幾頁 default:1 */ 
-                pageSize: 20 /**每頁最多數據量 default:20 */ 
+                pageIndex: this.$store.state.admin.currentPageIndex,/**第幾頁 default:1 */ 
+                pageSize: this.$store.state.admin.currentPageSize /**每頁最多數據量 default:20 */ 
             },
         }
     },
@@ -40,7 +40,8 @@ export default {
          * @param {*} pageIndex nunber default:1, table index page 
          * @param {*} pageSize nunber default:20, the count of data in table list
          */
-        async handleDataList(pageIndex = 1, pageSize = 20) {            
+        async handleDataList(pageIndex, pageSize) { 
+            this.config.superAdminOpen = true
             try {
                 //res return obj
                 const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${pageIndex}/${pageSize}`)
@@ -48,6 +49,7 @@ export default {
                 if(res.resCode !== 90500) {
                     this.list = res.data
                     this.total = res.total
+                    this.$store.dispatch('admin/resetPagination')
                     return
                 }
                 await this.notifyFunc(res.resCode)
@@ -67,7 +69,7 @@ export default {
          * @param {*} pageIndex nunber default:1, table index page 
          * @param {*} pageSize nunber default:20, the count of data in table list
          */
-        async roleHandleDataList(pageIndex = 1, pageSize = 20) {
+        async roleHandleDataList(pageIndex, pageSize) {
             try {
                 //res return obj
                 const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${this.config.manager_id}/${pageIndex}/${pageSize}`)
@@ -75,6 +77,7 @@ export default {
                 if(res.resCode !== 90500) {
                     this.list = res.data
                     this.total = res.total
+                    this.$store.dispatch('admin/resetPagination')
                     return
                 }
                 await this.notifyFunc(res.resCode)
@@ -95,6 +98,8 @@ export default {
          * @param {*} row scope row data form Datatable component
          */        
         async handleEdit (row) {
+            this.$store.dispatch('admin/setCurrentPageIndex', this.pagination.pageIndex)
+            this.$store.dispatch('admin/setCurrentPageSize', this.pagination.pageSize)
             this.$router.push(`/admin/${this.addPushTo}/edit/${row._id}`)
         },
         /**
@@ -103,8 +108,12 @@ export default {
          * @param {*} row scope row data form Datatable component
          */
         handleDel (row) {
-
-            this.$confirm(`是否刪除 "${row.name ? row.name : row.title }"? 如果您的品牌已經建立過商品, 刪除此品牌將會一併刪除相關的所有商品, 確定要刪除?`, '提示', {
+            let tips = ''
+            if(this.config.serverController === 'brand'){
+                tips = '如果您的品牌已經建立過商品, 刪除此品牌將會一併刪除相關的所有商品, 確定要刪除?'
+            }
+            
+            this.$confirm(`是否刪除 "${row.name ? row.name : row.title }"? ${tips}`, '提示', {
                 confirmButtonText: '確定',
                 cancelButtonText: '取消',
                 type: 'error'
@@ -113,7 +122,7 @@ export default {
                 try {
                     const res = await this.$axios.$delete(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${row._id}/${this.$store.state.auth.id}`)
                     
-                    if(res.resCode !== 90500) this.roleHandleDataList()
+                    if(res.resCode !== 90500) this.roleHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
                     if(!this.$_.isEmpty(row.imageUrl)) await this.deletImg(row.imageUrl)
                     await this.notifyFunc(res.resCode)
                 }catch (err){
@@ -136,7 +145,10 @@ export default {
          */
         async handleSizeChange (pagination) {
             this.pagination = pagination
-            this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
+            if(this.config.superAdminOpen === true){
+                return this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)    
+            }
+            this.roleHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
         }, 
         /**
         * @desc toggle which page to show
@@ -144,7 +156,10 @@ export default {
         */
         async handleIndexChange (pagination) {
             this.pagination = pagination
-            this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
+            if(this.config.superAdminOpen === true){
+                return this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)    
+            }
+            this.roleHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
         },        
     },
     components: {        

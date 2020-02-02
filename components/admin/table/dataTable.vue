@@ -137,10 +137,10 @@
                     filterStatus: '',//狀態欄位
                     filterDate: null,//時間間格
                 },
-                
+                                
                 statuses: [],//當前表格內的狀態結構
                 statusColor: [],//狀態顏色
-                pageIndex: 1,//分頁預設值:當前頁面
+                //pageIndex: 1,//分頁預設值:當前頁面
                 tableCurrentPagination: {}, //當前分頁的數據結構
                 downloadLoading: false,
             };
@@ -183,7 +183,7 @@
                 })
             }
         },
-        mounted () {
+        created () {
             // 每一頁展示條數控制
             if (this.page__pagination && !this.page__pagination.pageSizes) {
                 this.page__pagination.pageArray = __pageArray 

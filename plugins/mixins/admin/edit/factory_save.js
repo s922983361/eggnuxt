@@ -12,7 +12,10 @@ export default {
             }
             
             let res = {}
+            //used by page of brand
             editData.manager_id = this.$store.state.auth.id
+            //used by page of goods
+            editData.brand_id = this.$store.state.brand.currentBrandId
 
             try{
                 if(!this.$_.isEmpty(this.$route.params.id)) {

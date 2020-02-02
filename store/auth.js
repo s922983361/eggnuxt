@@ -6,6 +6,7 @@ export const state = () => ({
     id: '',
     role_id: '',
     role_title: '',
+    brand_id: '',
     username: '',
     avatar: '',
     is_super:'',
@@ -26,6 +27,9 @@ export const mutations = {
     },
     SET_ROLE_TITLE(state, role_title) {
         state.role_title = role_title
+    },
+    SET_BRAND_ID(state, brand_id) {
+        state.brand_id = brand_id
     },
     SET_NAME(state, name) {
         state.username = name
@@ -59,6 +63,7 @@ export const actions = {
                 commit('SET_ID', res.id)
                 commit('SET_ROLE_ID', res.role_id._id)
                 commit('SET_ROLE_TITLE', res.role_id.title)
+                commit('SET_BRAND_ID', res.brand_id)
                 commit('SET_NAME', res.name)
                 commit('SET_AVATAR', res.avatar)
                 commit('SET_ISSUPER', res.is_super)
@@ -88,6 +93,7 @@ export const actions = {
         //set null to manager.state.token
         commit('SET_ID', '')
         commit('SET_ROLE_ID', '')
+        commit('SET_BRAND_ID', '')
         commit('SET_TOKEN', '')
         commit('SET_NAME', '')
         commit('SET_AVATAR', '')
