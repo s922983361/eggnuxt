@@ -1,4 +1,5 @@
 require('dotenv').config()
+const webpack = require('webpack')
 
 module.exports = {
 	mode: 'universal',
@@ -35,7 +36,7 @@ module.exports = {
 	** Global CSS
 	*/
 	css: [
-		'element-ui/lib/theme-chalk/index.css'
+		'element-ui/lib/theme-chalk/index.css', //used by element-ui
 	],
 
 	/*
@@ -45,7 +46,9 @@ module.exports = {
 		{ src: '@/plugins/axios', ssr: true },
 		{ src: '@/plugins/element-ui', ssr: true },
 		{ src: '@/plugins/lodash.js', ssr: false },
-		{ src: '@/plugins/imgCompress.js', ssr: false },	
+		{ src: '@/plugins/helper.js', ssr: false },
+		{ src: '@/plugins/imgCompress.js', ssr: false },
+		{ src: '@/plugins/nuxt-quill-plugin.js', ssr: false },
 	],
 
 	/*
@@ -217,6 +220,12 @@ module.exports = {
 			config.node = {
 				fs: 'empty'
 			}
-		}
+		},
+		plugins: [
+			new webpack.ProvidePlugin({
+				'window.Quill': 'quill/dist/quill.js',
+				'Quill': 'quill/dist/quill.js'
+			})
+		]		
 	}
 }

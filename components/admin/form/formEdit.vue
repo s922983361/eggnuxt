@@ -54,9 +54,10 @@
                         :label="item.label" 
                         :prop="item.prop"
                         :key="item.prop"
-                        :rules="item.rules"                        
+                        :rules="item.rules"
                         >
-                        <el-input :type="item.type" v-model.trim="model[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled"></el-input>
+                        <el-input v-if="item.is_goodeTypeAttr" :type="item.type" v-model.trim="goodeTypeAttr[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled" @input="change($event)"></el-input>
+                        <el-input v-else :type="item.type" v-model.trim="model[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled"></el-input>
                         
                         </el-form-item>
                     <el-form-item
@@ -67,7 +68,9 @@
                         :key="item.prop"
                         :rules="item.rules"
                         >
-                        <el-input :type="item.type" v-model="model[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func"></el-input>
+                        <el-input v-if="item.is_goodeTypeAttr" :type="item.type" v-model="goodeTypeAttr[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func" @input="change($event)"></el-input>
+
+                        <el-input v-else :type="item.type" v-model="model[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func"></el-input>
 
                         </el-form-item>
                     <el-form-item
@@ -77,17 +80,25 @@
                         :key="item.prop"
                         :rules="item.rules"
                         >
-                        <el-select v-if="item.multiple" v-model="model[item.prop]" :placeholder="item.placeholder" multiple>
-                            <template v-for="option in item.options">
-                                <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
-                            </template>
-                        </el-select>
-                        <el-select v-if="!item.multiple" v-model="model[item.prop]" :placeholder="item.placeholder">
-                            <template v-for="option in item.options">
-                                <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
-                            </template>
-                        </el-select>
-
+                        <template v-if="item.is_goodeTypeAttr">
+                            <el-select v-model="goodeTypeAttr[item.prop]" :placeholder="item.placeholder" @input="change($event)">
+                                <template v-for="option in item.options">
+                                    <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
+                                </template>
+                            </el-select>
+                        </template>
+                        <template v-else>
+                            <el-select v-if="item.multiple" v-model="model[item.prop]" :placeholder="item.placeholder" multiple>
+                                <template v-for="option in item.options">
+                                    <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
+                                </template>
+                            </el-select>
+                            <el-select v-else v-model="model[item.prop]" :placeholder="item.placeholder" @change="valueSelected">
+                                <template v-for="option in item.options">
+                                    <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
+                                </template>
+                            </el-select>
+                        </template>
                         </el-form-item>
                     <el-form-item
                         v-if="item.type == 'switch'"
@@ -135,6 +146,20 @@
                         </el-checkbox>
 
                         </el-col>
+                    <el-form-item
+                        v-if="item.type == 'editor'"
+                        :key="item.prop"
+                        :rules="item.rules"
+                        >
+                        <quillEditor                             
+                            :editorData="model[item.prop]"
+                            :qplaceholder="item.placeholder"
+                            :action="item.action"
+                            :uploadFile="item.uploadFile"
+                            :imageFolder="item.imageFolder"
+                            @quillEditorData="setGoodsContent"
+                            ref="myQuillEditor" />
+                        </el-form-item>
                 </template>  
             </template>
         </viewPage>    
@@ -146,7 +171,8 @@
 </template>
 
 <script>
-    import viewPage from '@/components/admin/form/viewPage'
+    import viewPage from '@/components/admin/form/viewPage'    
+    import quillEditor from '@/components/admin/form/quillEditor'
     import notify from '@/plugins/mixins/admin/notify'
     import { showLoading, hideLoading } from '@/plugins/libs/loading'
 
@@ -154,10 +180,15 @@
         mixins: [ notify ],
         data () {
             return {
-                model: {
+                model: {                    
                     imageUrl: '',
-                    attr_type: ''
-                }, 
+                    goods_content: '',
+                    goods_content_images: [],
+                    attr_type: '',
+                    attr_id_list: [],
+                    attr_value_list: []
+                },               
+                goodeTypeAttr: {},                
             }
         },
         props: {
@@ -172,7 +203,7 @@
                 })
                 if(uploadData.length > 0) { return { 'Authorization': this.$store.state.auth.token }}
                 //default value
-                return false
+                return {}
             },
             showTextArea__Func() {
                 // extend 
@@ -181,7 +212,7 @@
                 if(this.model.attr_type == '1' || this.model.attr_type == '2') return true
                 //default value
                 return false
-            }
+            },
         },
         mounted() {
             //_id.vue : To fetch Data first if ID is exsist after mounted 
@@ -214,6 +245,11 @@
             async submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
+                        //if goodeTypeAttr obj is not null let keys of obj write in [attr_id_list] && values of obj write in [attr_value_list]
+                        if(Object.keys(this.goodeTypeAttr).length !== 0) {
+                            this.attr_id_list = Object.keys(this.goodeTypeAttr)
+                            this.attr_value_list = Object.values(this.goodeTypeAttr)
+                        }
                         //pass Data to parent component
                         this.$emit('editData', this.model);
                     } else {
@@ -227,8 +263,18 @@
                 });
             },
             //reset all input data in this component
-            resetForm(formName) {
-                this.$refs[formName].resetFields();
+            resetForm(formName) {                
+                this.clearGoodeTypeAttr()
+                //remove extra form if page includes dynamic form
+                this.$emit('deleteDynamicForm');
+                this.$refs[formName].resetFields()
+            },
+            clearGoodeTypeAttr() {
+                if(Object.keys(this.goodeTypeAttr).length !== 0) {
+                    for (const prop of Object.getOwnPropertyNames(this.goodeTypeAttr)) {
+                        delete this.goodeTypeAttr[prop];
+                    }
+                }                
             },
             // fetch Data from serverController after mounted
             async fetchDetail(serverController, id) { 
@@ -305,10 +351,26 @@
                     message: '沒有權限!',
                     customClass: 'bg-red-200'
                 })
+            },
+            async valueSelected(value){                
+                //pass Data to parent component
+                this.$emit('selectValueChanged', value);
+            },
+            setGoodsContent(html) {
+                this.model.goods_content = html
+            },
+            setGoodsContentImages(url) {
+                this.model.goods_content_images.push(url)
+            },
+            //強制刷新
+            change(e) {
+                this.$forceUpdate()
             }
+            
         },
         components: {
-            viewPage
+            viewPage,
+            quillEditor,
         }
     }    
 </script>

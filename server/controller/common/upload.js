@@ -20,27 +20,68 @@ router.post('/', upload.single('file'), async (ctx) => {
     // the dir we set the name we wnat 
     const destPathDir = `${__dirname}/../../../static/uploads/${uploadFile}`
     // mkdir if not exist dir 
-    !fs.existsSync(destPathDir) && fs.mkdirSync(destPathDir)
-
-    try {        
-        //upload file will be seted in default folder '/static/uploads', after upload asunc moving file to custom folder       
-        fs.rename(sourceFile, destPath, (err) => {
-            if (err) throw err
-        })
-        //nuxt static/uploads
-        //file.url = `${process.env.BASE_URL? process.env.BASE_URL:'http://localhost:3000'}/uploads/${uploadFile}/${file.filename}`
-        file.url = `${uploadFile}/${file.filename}`
-        return ctx.body = {
-            file
+    //!fs.existsSync(destPathDir) && fs.mkdirSync(destPathDir)
+    if(!fs.existsSync(destPathDir)) {
+        const promiseDir = new Promise((resolve, reject) => { 
+            //use promise to make sure destPathDir is setted           
+            fs.mkdir(destPathDir, { recursive: true }, (err) => {
+                if (err) reject(new Error(err))
+                resolve('isSet')
+            })
+        }).then((value) => {
+            //upload file will be seted in default folder '/static/uploads', after upload asunc moving file to custom folder 
+            fs.rename(sourceFile, destPath, (err) => { if (err) throw err})                
+            return value
+        }).catch((err => {
+            console.log(err)  
+        }))
+        try {            
+            const res = await promiseDir
+            //make sure Promise is OK
+            if(res === 'isSet') {
+                file.url = `${uploadFile}/${file.filename}`            
+                return ctx.body = { file }
+            }
+            ctx.status = 404            
+        }catch(err) {
+            ctx.body = { msg:err.message }
+            ctx.app.emit('error', err, ctx);
         }
+    } else {
+        try {
+            fs.rename(sourceFile, destPath, (err) => { if (err) throw err})
+            file.url = `${uploadFile}/${file.filename}`
+            return ctx.body = { file }
+        }catch(err) {
+            ctx.body = { msg:err.message }
+            ctx.app.emit('error', err, ctx);
+        }        
     }
-    catch(err) {
+    
+    // if(!fs.existsSync(destPathDir)) {
+    //     fs.mkdir(destPathDir, { recursive: true }, (err) => {
+    //         if (err) throw err
+    //     })
+    // }
+    // try {        
+    //     //upload file will be seted in default folder '/static/uploads', after upload asunc moving file to custom folder       
+    //     fs.rename(sourceFile, destPath, (err) => {
+    //         if (err) throw err
+    //     })
+    //     //nuxt static/uploads
+    //     //file.url = `${process.env.BASE_URL? process.env.BASE_URL:'http://localhost:3000'}/uploads/${uploadFile}/${file.filename}`
+    //     file.url = `${uploadFile}/${file.filename}`
+    //     return ctx.body = {
+    //         file
+    //     }
+    // }
+    // catch(err) {
         
-        ctx.body = {
-            msg:err.message
-        }
-        ctx.app.emit('error', err, ctx);
-    }
+    //     ctx.body = {
+    //         msg:err.message
+    //     }
+    //     ctx.app.emit('error', err, ctx);
+    // }
 })
 
 module.exports = router.routes();

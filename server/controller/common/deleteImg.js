@@ -7,8 +7,9 @@ const tools = require('../../utils/tools')
 router.post('/', async (ctx) => {
     //ctx.request.body.imgPath is database image path & should be a 'String'
     const filePath = ctx.request.body.imgPath
+    tools.isEmpty(filePath) && ctx.throw(400, 'DeleteImg Without-- FilePath')
     const destPath = `${__dirname}/../../../static/uploads/${filePath}`
-    if(!tools.isEmpty(destPath)) {
+    if(fs.existsSync(destPath)) {
         //async delete brandLogo Image
         fs.unlink(destPath, (err) => {
             if (err) throw err
