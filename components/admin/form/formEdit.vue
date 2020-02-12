@@ -154,11 +154,13 @@
                         <quillEditor                             
                             :editorData="model[item.prop]"
                             :qplaceholder="item.placeholder"
+                            :maxLength="item.maxLength"
                             :action="item.action"
                             :uploadFile="item.uploadFile"
                             :imageFolder="item.imageFolder"
                             @quillEditorData="setGoodsContent"
-                            ref="myQuillEditor" />
+                            ref="myQuillEditor">
+                        </quillEditor>
                         </el-form-item>
                 </template>  
             </template>

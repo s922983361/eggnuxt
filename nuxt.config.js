@@ -37,6 +37,9 @@ module.exports = {
 	*/
 	css: [
 		'element-ui/lib/theme-chalk/index.css', //used by element-ui
+		'quill/dist/quill.snow.css',
+		'quill/dist/quill.bubble.css',
+		'quill/dist/quill.core.css'
 	],
 
 	/*
@@ -159,7 +162,23 @@ module.exports = {
 	*/
 	webfontloader: {
 		google: {
-		  	families: ['Lato:400,700'] //Loads Lato font with weights 400 and 700
+			//See https://www.ctolib.com/Developmint-nuxt-webfontloader.html
+			//See https://developers.google.com/fonts/docs/getting_started
+			//See https://www.npmjs.com/package/webfontloader
+			families: [
+				'Lato:n4,i4,n7,i7',
+				'Noto Serif TC:n4,n7',
+				'Noto Sans TC:n4,n7',
+				'Playfair Display:n4,i4,n7,i7'
+			],
+			urls: [
+				// for each Google Fonts add url + options you want
+				// here add font-display option
+				'https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap',
+				'https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,700&display=swap',
+				'https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,700&display=swap',
+				'https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i&display=swap'
+			]
 		}
 	},
 

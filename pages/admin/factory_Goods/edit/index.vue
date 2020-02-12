@@ -46,11 +46,12 @@
                         label: '商品詳情',
                         prop: 'goods_content',
                         type: 'editor',//['input','select','checkbox','textarea']
-
+                        //elupload Data
                         action: '/api/admin/upload',
                         uploadFile : `goodsContentImg/${this.$store.state.admin.currentBrandId}`,
                         imageFolder: `${process.env.BASE_URL}/uploads/`,
-                        
+                        //editor Data
+                        maxLength: 100, //the maxlength words in editor you can write
                         placeholder: '請在此輸入.....',
                         position: 'description-response-full',//['other-response-left', 'other-response-right', 'other-response-full','other-response-checkbox']
                     },

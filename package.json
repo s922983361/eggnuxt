@@ -42,6 +42,7 @@
     "nuxt-social-meta": "0.0.1",
     "nuxt-vuex-router-sync": "0.0.3",
     "nuxt-webfontloader": "^1.1.0",
+    "quill-image-drop-module": "^1.0.3",
     "quill-image-resize-module": "^3.0.0",
     "superagent": "^5.2.1",
     "svg-captcha": "^1.4.0",

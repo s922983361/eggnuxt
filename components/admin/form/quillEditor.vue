@@ -1,5 +1,5 @@
 <template>    
-    <section class="container">
+    <section class="editor_container">
         <el-upload
             v-show="elUpload.display"
             class="avatar-uploader"
@@ -17,11 +17,22 @@
             <i class="el-icon-plus avatar-uploader-icon"></i>
             </el-upload>
 
-        <el-dialog :visible.sync="dialogVisible">
-            <img width="100%" :src="dialogImageUrl" alt="">
+        <el-dialog 
+            :visible.sync="elDialog.dialogVisible"
+            width="70%"
+            >
+            <div 
+                class="leading-normal"
+                v-html="$_.isEmpty(qcontent)? '尚未輸入內容': qcontent">
+                </div>
+            <span slot="footer" class="dialog-footer">                
+                <el-button type="primary" @click="elDialog.dialogVisible = false">確定</el-button>
+            </span>
         </el-dialog>
-
-        <div class="quill-editor"            
+        <el-button type="text" @click="elDialog.dialogVisible = true">預覽</el-button>
+        
+        <div class="quill-editor" 
+            :style="{ height: quillEditorHeight + 'px' }"
             :content="qcontent"
             @change="onEditorChange($event)"
             @blur="onEditorBlur($event)"
@@ -29,14 +40,17 @@
             @ready="onEditorReady($event)"
             v-quill:myQuillEditor="editorOption">
         </div>
+        <div :style="countHeightStyle" v-if="countHeightStyle" class="cfpa-quill-wordCount">
+            <div class="cfpa-quill-wordCount-text">當前已經輸入<span style="color: red">{{contentLength}}</span>個字符</div>
+        </div>
     </section>
 </template>
 
 <script>
     /** require styles */
-    import 'quill/dist/quill.core.css'
-    import 'quill/dist/quill.snow.css'
-    import 'quill/dist/quill.bubble.css'
+    // import 'quill/dist/quill.core.css'
+    // import 'quill/dist/quill.snow.css'
+    // import 'quill/dist/quill.bubble.css'
     
     //import notify from '@/plugins/mixins/admin/notify'
     import deleteImg from '@/plugins/mixins/admin/deleteImg'
@@ -45,22 +59,28 @@
         mixins: [ deleteImg ], 
         props: {
             editorData: { type: String, default: '' },
+            editorHeight: { type: Number, default: 1000 },
             qplaceholder: { type: String, default: '' },
             action: { type: String, default: '' },
             uploadFile: { type: String, default: '' },
             imageFolder: { type: String, default: '' },
+            maxLength: { type: Number, default: 2000 },
         },       
         data () {
             return {
                 elUpload: {
                     display: false,
                 },
-                dialogImageUrl: '',
-                dialogVisible: false,
-                disabled: false,
+                elDialog: {
+                    dialogVisible: false,
+                    disabled: false,
+                },
 
+                quillEditorHeight: 0,
                 qcontent: this.editorData,
                 placeholder: this.qplaceholder,
+                contentLength: 0,//總字符數
+                countHeightStyle: {},//記字器的高度
 
                 allImgPaths: [],//編輯器內所有圖片的path
                 currentImgPaths:[],//刪除後當下編輯器圖片的path
@@ -68,7 +88,8 @@
                     bounds: 'app',
                     theme: 'snow',
                     placeholder: '',
-                    modules: {                        
+                    modules: { 
+                        imageDrop: true,
                         imageResize: {
                             displayStyles: {
                                 backgroundColor: 'black',
@@ -99,23 +120,26 @@
                                 /**文本方向 */
                                 [{'direction': 'rtl'}],
                                 /**字體顏色 字體背景顏色 */
-                                [{ color: [] }, { background: [] }],
-                                /**字體種類 */
-                                //[{ font: [] }],
+                                [{ color: [] }, { background: [] }], 
                                 /**對齊格式 */
                                 [{ align: [] }],
                                 /**清除文本格式 */
                                 ["clean"],
                                 /**超連接 圖片 */
-                                ["link", "image"],
+                                ["image"],
                                 /**上標 下標 */
                                 [{ script: "sub" }, { script: "super" }],
                                 /**引用 代碼塊 */
                                 ['blockquote', 'code-block'],
+                                // 标题，键值对的形式；1、2表示字体大小
+                                [{ 'header': 1 }, { 'header': 2 }],
+                                /**字體種類 */
+                                [{ font: ['Lato', 'Noto-Sans-TC', 'Noto-Serif-TC', 'Playfair-Display', false] }],
                                 /**字體大小 */
-                                [{ size: ["small", false, "large", "huge"] }],
+                                //[{ size: ["small", false, "large", "huge"] }],
+                                [{ size: ['10px', false, '14px', '16px', '18px', '20px'] }],
                                 /**標題 */
-                                [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                                [{ header: [1, 2, 3, 4, false] }],
                             ]
                         }
                     }
@@ -125,6 +149,17 @@
         created() {
             //initial allImgPaths Array & currentImgPaths Array
             this.getEditorImgArray()
+            this.quillEditorHeight = document.body.clientHeight - this.editorHeight
+        },
+        mounted() {
+            //countHeight equal toolbarHeight
+            let toolbar = document.querySelector('div.ql-toolbar.ql-snow')
+            if (toolbar) {
+                let toolbarHeight = toolbar.offsetHeight
+                this.countHeightStyle = { 'top': `${toolbarHeight}px` }
+                return
+            }
+            this.countHeightStyle = {'top': '42px'}
         },
         computed: {
             getHeader__Func() {
@@ -141,7 +176,7 @@
             onEditorFocus(editor) {
                 //access deny
                 if(this.$store.state.auth.is_super === true || this.$store.state.auth.memOnly === true) {
-                    return editor.enable(true)                    
+                    return editor.enable(true)
                 }
                 this.$notify({
                     title: 'Info',
@@ -153,7 +188,27 @@
             },
             onEditorReady(editor) {
             },
-            onEditorChange({ editor, html, text }) {
+            onEditorChange({quill, html, text}) {
+                this.contentLength = !this.$_.isUndefined(text) ? this.$helper.Trim(text).length : 0
+
+                if(this.contentLength == (this.maxLength) * 0.8 || this.contentLength == (this.maxLength) * 0.85 || this.contentLength == (this.maxLength) * 0.9 || this.contentLength == (this.maxLength) * 0.95) {
+                    this.$notify({
+                        title: 'Info',
+                        type: 'warning',
+                        message: `最多只可輸入 '${this.maxLength}' 字 `,
+                        customClass: 'bg-yellow-200'
+                    })
+                }
+                if(this.contentLength > this.maxLength) {
+                    this.$notify({
+                        title: 'Info',
+                        type: 'warning',
+                        message: `可輸入字數已達上限 `,
+                        customClass: 'bg-yellow-200'
+                    })
+                    return quill.enable(true)
+                }
+                
                 //listen image is need to delete?
                 this.removeImg(html)
                 this.qcontent = html
@@ -288,16 +343,124 @@
     }
 
 </script>
-<style scoped>
-    .container {
-        width: 100%;
+<style>/***Dont scoped Here **/
+       /***Dont scoped Here **/
+       /***Dont scoped Here **/
+    .editor_container {
+        max-width: 65vw;
         margin: 0 auto;
         padding: 50px 0;
     }    
-    .container .quill-editor {
+    .editor_container .quill-editor {        
         min-height: 200px;
         max-height: 500px;
         overflow-y: auto;
+    }
+    .ql-snow .ql-picker.ql-size .ql-picker-label::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item::before {
+        content: "12px";
+    }
+
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
+        content: "10px";
+    }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14px"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
+        content: "14px";
+    }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16px"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
+        content: "16px";
+    }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="18px"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before {
+        content: "18px";
+    }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20px"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20px"]::before {
+        content: "20px";
+    }
+
+    .ql-snow .ql-picker.ql-header .ql-picker-label::before,
+    .ql-snow .ql-picker.ql-header .ql-picker-item::before {
+        content: "文本";
+    }
+    .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
+    .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before {
+        content: "標題一";
+    }
+    .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
+    .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before {
+        content: "標題二";
+    }
+    .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="3"]::before,
+    .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="3"]::before {
+        content: "標題三";
+    }
+    .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="4"]::before,
+    .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="4"]::before {
+        content: "標題四";
+    }
+    .ql-snow .ql-picker.ql-header .ql-picker-label[data-value="5"]::before,
+    .ql-snow .ql-picker.ql-header .ql-picker-item[data-value="5"]::before {
+        content: "標題五";
+    }
+
+    .ql-snow .ql-picker.ql-font .ql-picker-label::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item::before {
+        content: "標準字體";
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Lato"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Lato"]::before {
+        content: "Lato";
+        font-family: 'Lato';
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Noto-Sans-TC"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Noto-Sans-TC"]::before {
+        content: "黑體";
+        font-family: "Noto Sans TC";
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Noto-Serif-TC"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Noto-Serif-TC"]::before {
+        content: "宋體";
+        font-family: "Noto Serif TC";
+    }
+    .ql-snow .ql-picker.ql-font .ql-picker-label[data-value="Playfair-Display"]::before,
+    .ql-snow .ql-picker.ql-font .ql-picker-item[data-value="Playfair-Display"]::before {
+        content: "Playfair-Display";
+        font-family: "Playfair Display";
+    }
+    .ql-font-Lato {
+        font-family: "Lato";
+    }
+    .ql-font-Noto-Sans-TC {
+        font-family: "Noto Sans TC";
+    }
+    .ql-font-Noto-Serif-TC {
+        font-family: "Noto Serif TC";
+    }
+    .ql-font-Playfair-Display {
+        font-family: "Playfair Display";
+    }
+    .ql-font-sans-serif {
+        font-family: "sans-serif";
+    }
+    .cfpa-quill-wordCount {
+        background-color: #ffffff;
+        position: relative;
+        border-left: 1px solid #ccc;
+        border-right: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        border-bottom-left-radius: 3px;
+        border-bottom-right-radius: 3px;
+        line-height: 20px;
+        font-size: 12px;
+    }
+    .cfpa-quill-wordCount .cfpa-quill-wordCount-text{
+        text-align: right;
+        margin-right: 10px;
+        color: #aaa;
     }
     
 </style>
