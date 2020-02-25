@@ -39,6 +39,21 @@
                             </el-upload>
                         </el-form-item>
                     <el-form-item
+                        v-if="item.type == 'image_list'"
+                        :label="item.label"
+                        :prop="item.prop"
+                        :key="item.prop"
+                        >
+                        <imageList
+                            :action="item.action"
+                            :uploadFile="item.uploadFile"
+                            :imageFolder="item.imageFolder"
+                            :currentColorList="matchColor__Func"
+                            :colorSelectOption="color__SelectOption"
+                            >
+                            </imageList>
+                        </el-form-item>
+                    <el-form-item
                         v-if="item.type == 'colorPicker'"
                         :label="item.label" 
                         :prop="item.prop"
@@ -56,22 +71,64 @@
                         :key="item.prop"
                         :rules="item.rules"
                         >
-                        <el-input v-if="item.is_goodeTypeAttr" :type="item.type" v-model.trim="goodeTypeAttr[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled" @input="change($event)"></el-input>
-                        <el-input v-else :type="item.type" v-model.trim="model[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled"></el-input>
-                        
+                        <template v-if="item.is_goodeTypeAttr">
+                            <el-input :type="item.type" v-model.trim="goodeTypeAttr[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled" @input="change($event)">
+                                <template slot="append" v-if="item.popoverShow">
+                                    <el-popover
+                                        :placement="item.popoverPlacement"
+                                        :title="item.popoverTitle"
+                                        :width="item.popoverWidth"
+                                        :trigger="item.popoverTrigger"
+                                        :content="item.popoverContent"
+                                        :popper-class="item.popoverPopperClass"
+                                        :class="item.popoverClass">
+                                        <el-button slot="reference" :icon="item.popoverElIcon"></el-button>
+                                    </el-popover>
+                                </template>
+                            </el-input>
+                        </template>
+                        <template v-else>
+                            <el-input v-if="item.isNumber" :type="item.type" v-model.number="model[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled">
+                                <template slot="append" v-if="item.popoverShow">
+                                    <el-popover
+                                        :placement="item.popoverPlacement"
+                                        :title="item.popoverTitle"
+                                        :width="item.popoverWidth"
+                                        :trigger="item.popoverTrigger"
+                                        :content="item.popoverContent"
+                                        :popper-class="item.popoverPopperClass"
+                                        :class="item.popoverClass">
+                                        <el-button slot="reference" :icon="item.popoverElIcon"></el-button>
+                                    </el-popover>
+                                </template>
+                            </el-input>
+                            <el-input v-else :type="item.type" v-model.trim="model[item.prop]" :placeholder="item.placeholder" :disabled="item.disabled">
+                                <template slot="append" v-if="item.popoverShow">
+                                    <el-popover
+                                        :placement="item.popoverPlacement"
+                                        :title="item.popoverTitle"
+                                        :width="item.popoverWidth"
+                                        :trigger="item.popoverTrigger"
+                                        :content="item.popoverContent"
+                                        :popper-class="item.popoverPopperClass"
+                                        :class="item.popoverClass">
+                                        <el-button slot="reference" :icon="item.popoverElIcon"></el-button>
+                                    </el-popover>
+                                </template>
+                            </el-input>
+                        </template>
                         </el-form-item>
                     <el-form-item
                         v-if="item.type == 'textarea'"
                         :label="item.label" 
-                        :prop="item.prop"
-                        :rows="item.rows"
+                        :prop="item.prop"                        
                         :key="item.prop"
                         :rules="item.rules"
                         >
-                        <el-input v-if="item.is_goodeTypeAttr" :type="item.type" v-model="goodeTypeAttr[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func" @input="change($event)"></el-input>
-
-                        <el-input v-else :type="item.type" v-model="model[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func"></el-input>
-
+                        <el-input v-if="item.is_goodeTypeAttr" :type="item.type" v-model="goodeTypeAttr[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func" :rows="item.rows" @input="change($event)">
+                        </el-input>                        
+                        <el-input v-else :type="item.type" v-model="model[item.prop]" :placeholder="item.placeholder" :disabled="showTextArea__Func" :rows="item.rows">                            
+                        </el-input>                        
                         </el-form-item>
                     <el-form-item
                         v-if="item.type == 'select'"
@@ -93,12 +150,27 @@
                                     <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
                                 </template>
                             </el-select>
-                            <el-select v-else v-model="model[item.prop]" :placeholder="item.placeholder" @change="valueSelected">
+                            <el-select v-else v-model="model[item.prop]" :placeholder="item.placeholder" @change="(value) => valueSelected(value, item.prop)">
                                 <template v-for="option in item.options">
                                     <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
                                 </template>
                             </el-select>
                         </template>
+                        <el-popover
+                            v-if="item.popoverShow"
+                            :placement="item.popoverPlacement"
+                            :title="item.popoverTitle"
+                            :width="item.popoverWidth"
+                            :trigger="item.popoverTrigger"
+                            :content="item.popoverContent"
+                            :popper-class="item.popoverPopperClass"
+                            >
+                            <span slot="reference" class="text-blue-700 text-lg ml-4 cursor-pointer">
+                                <i :class="item.popoverElIcon"></i>
+                            </span>
+                            
+                            <!-- <el-button slot="reference" :icon="item.popoverElIcon" class="text-blue-700 text-lg"></el-button> -->
+                        </el-popover>
                         </el-form-item>
                     <el-form-item
                         v-if="item.type == 'switch'"
@@ -109,6 +181,7 @@
                         >
                         <el-switch
                             style="display: block"
+                            class="mt-2"
                             v-model="model[item.prop]"
                             active-color="#13ce66"
                             inactive-color="#ff4949"
@@ -131,6 +204,30 @@
                         </el-radio-group>
 
                         </el-form-item>
+                    <el-form-item
+                        v-if="item.type == 'card-list'"
+                        :label="item.label"
+                        :prop="item.prop"
+                        :key="item.prop"
+                        :rules="item.rules"
+                        >
+                        <cardList
+                            :cardListData="model[item.prop]"
+                            :placeholder="item.placeholder"
+                            :placement="item.popoverPlacement"
+                            :title="item.popoverTitle"
+                            :width="item.popoverWidth"
+                            :trigger="item.popoverTrigger"
+                            :content="item.popoverContent"
+                            :popper-class="item.popoverPopperClass"
+                            :qclass="item.popoverClass"
+                            :icon="item.popoverElIcon"
+                            @setGoodsAttrArr="setGoodsAttrArr"
+                        >
+                        </cardList>
+
+                        </el-form-item>
+                    
                     <el-col :xs="6" :sm="4" :md="3"
                         v-if="item.type == 'checkbox'" 
                         :key="item.prop"
@@ -146,11 +243,7 @@
                         </el-checkbox>
 
                         </el-col>
-                    <el-form-item
-                        v-if="item.type == 'editor'"
-                        :key="item.prop"
-                        :rules="item.rules"
-                        >
+                    <div v-if="item.type == 'editor'" :key="item.prop">
                         <quillEditor                             
                             :editorData="model[item.prop]"
                             :qplaceholder="item.placeholder"
@@ -159,22 +252,27 @@
                             :uploadFile="item.uploadFile"
                             :imageFolder="item.imageFolder"
                             @quillEditorData="setGoodsContent"
-                            ref="myQuillEditor">
+                            ref="myQuillEditor"
+                            >
                         </quillEditor>
-                        </el-form-item>
+                    </div>
                 </template>  
             </template>
-        </viewPage>    
-        <el-form-item>
-            <el-button type="primary" @click="submitForm('Form')">{{ $route.params.id || $route.params.attrId ? `編輯` : `新增`}}</el-button>
-            <el-button @click="resetForm('Form')">重置</el-button>
-        </el-form-item>
+        </viewPage> 
+        <div class="clearfix border-t-2">
+            <div class="float-right mr-10 mt-4">
+                <el-button type="primary" @click="submitForm('Form')" icon="el-icon-s-promotion">送出</el-button>
+                <el-button @click="resetForm('Form')" icon="el-icon-refresh">表單重置</el-button>
+            </div>
+        </div>
     </el-form>
 </template>
 
 <script>
     import viewPage from '@/components/admin/form/viewPage'    
     import quillEditor from '@/components/admin/form/quillEditor'
+    import cardList from '@/components/admin/form/cardList'
+    import imageList from '@/components/admin/form/imageList'
     import notify from '@/plugins/mixins/admin/notify'
     import { showLoading, hideLoading } from '@/plugins/libs/loading'
 
@@ -183,20 +281,22 @@
         data () {
             return {
                 model: {                    
-                    imageUrl: '',
-                    goods_content: '',
-                    goods_content_images: [],
-                    attr_type: '',
-                    attr_id_list: [],
-                    attr_value_list: []
-                },               
-                goodeTypeAttr: {},                
+                    imageUrl: '',       //main image (Just one image in this page)                    
+                    goods_content: '',  //used by "goods" page
+                    goods_attrs: [],    //used by "goods" page
+                    attr_type: '',      //used by "goods_Attr" page
+                    attr_id_list: [],   //used by "goods" page
+                    attr_value_list: [],//used by "goods" page
+                },
+                //there are Temp Data not DataProp 
+                goodeTypeAttr: {},  //used by "goods" page
             }
         },
         props: {
             imageFolder: { type: String, default: '' },
             serverController: { type: String, default: '' },
             form__Models: { type: Array, default: [] },
+            color__SelectOption: { type: Array, default: [] },
         },
         computed: { 
             getHeader__Func() {  
@@ -215,6 +315,10 @@
                 //default value
                 return false
             },
+            matchColor__Func() {
+                if(!this.$_.isUndefined(this.model.goods_color)) return this.model.goods_color
+                return []
+            }
         },
         mounted() {
             //_id.vue : To fetch Data first if ID is exsist after mounted 
@@ -354,9 +458,10 @@
                     customClass: 'bg-red-200'
                 })
             },
-            async valueSelected(value){                
+            async valueSelected(value, prop){ 
+                
                 //pass Data to parent component
-                this.$emit('selectValueChanged', value);
+                this.$emit('selectValueChanged', value, prop);
             },
             setGoodsContent(html) {
                 this.model.goods_content = html
@@ -364,15 +469,19 @@
             setGoodsContentImages(url) {
                 this.model.goods_content_images.push(url)
             },
+            setGoodsAttrArr(GoodsAttrArr) {
+                this.model.goods_attrs = GoodsAttrArr
+            },
             //強制刷新
             change(e) {
                 this.$forceUpdate()
-            }
-            
+            }            
         },
         components: {
             viewPage,
             quillEditor,
+            imageList,
+            cardList
         }
     }    
 </script>

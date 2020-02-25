@@ -40,6 +40,15 @@
                         placeholder: '輸入角色名稱',
                         position: 'response-left',//['response-left', 'response-right', 'response-full']
                         disabled: false,
+                        popoverShow: true,
+                        popoverPlacement: 'top',
+                        popoverTitle: '--提示--',
+                        popoverWidth: 300,
+                        popoverTrigger: 'click',
+                        popoverContent: '這是提示框的內容',
+                        popoverPopperClass: 'bg-green-200 border-green-500 text-md',
+                        popoverClass: 'text-blue-700 text-lg',
+                        popoverElIcon: 'el-icon-question',
                         rules:[
                             { required: true, message: '角色名稱必須填寫', trigger: 'blur' },
                             { max: 50, message: '太長(50個字)', trigger: 'blur' },
@@ -60,7 +69,7 @@
                         type: 'textarea',
                         placeholder: '簡單描述',
                         position: 'response-full',//['response-left', 'response-right', 'response-full']
-                        disabled: false                        
+                        disabled: false,                        
                     },
                     {                        
                         label: '創建時間:',

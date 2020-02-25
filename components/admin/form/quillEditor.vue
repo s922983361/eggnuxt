@@ -22,14 +22,14 @@
             width="70%"
             >
             <div 
-                class="leading-normal"
+                class="ql-editor"
                 v-html="$_.isEmpty(qcontent)? '尚未輸入內容': qcontent">
                 </div>
             <span slot="footer" class="dialog-footer">                
                 <el-button type="primary" @click="elDialog.dialogVisible = false">確定</el-button>
             </span>
         </el-dialog>
-        <el-button type="text" @click="elDialog.dialogVisible = true">預覽</el-button>
+        <el-button type="text" @click="elDialog.dialogVisible = true" icon="el-icon-view">預覽</el-button>
         
         <div class="quill-editor" 
             :style="{ height: quillEditorHeight + 'px' }"
@@ -45,12 +45,11 @@
         </div>
     </section>
 </template>
-
 <script>
     /** require styles */
-    // import 'quill/dist/quill.core.css'
-    // import 'quill/dist/quill.snow.css'
-    // import 'quill/dist/quill.bubble.css'
+    import 'quill/dist/quill.core.css'
+    import 'quill/dist/quill.snow.css'
+    import 'quill/dist/quill.bubble.css'
     
     //import notify from '@/plugins/mixins/admin/notify'
     import deleteImg from '@/plugins/mixins/admin/deleteImg'
@@ -76,14 +75,16 @@
                     disabled: false,
                 },
 
-                quillEditorHeight: 0,
-                qcontent: this.editorData,
+                quillEditorHeight: 0,//總高度
+                qcontent: this.editorData,//內容
                 placeholder: this.qplaceholder,
                 contentLength: 0,//總字符數
                 countHeightStyle: {},//記字器的高度
 
                 allImgPaths: [],//編輯器內所有圖片的path
                 currentImgPaths:[],//刪除後當下編輯器圖片的path
+
+                //Doc See https://quilljs.com/docs/quickstart/
                 editorOption: {
                     bounds: 'app',
                     theme: 'snow',
@@ -108,7 +109,15 @@
                                     } else {
                                         this.myQuillEditor.format('image', false)
                                     }
-                                }
+                                },
+                                'link': (value) => {
+                                    if (value) {
+                                        const href = prompt('輸入連結網址:')
+                                        this.myQuillEditor.format('link', href)
+                                    } else {
+                                        this.myQuillEditor.format('link', false)
+                                    }
+                                },
                             },
                             container: [
                                 /**粗體 斜體 下划線 刪除線 */
@@ -125,8 +134,8 @@
                                 [{ align: [] }],
                                 /**清除文本格式 */
                                 ["clean"],
-                                /**超連接 圖片 */
-                                ["image"],
+                                /**超連接link 圖片image 視頻video*/
+                                ["link", "image", "video"],
                                 /**上標 下標 */
                                 [{ script: "sub" }, { script: "super" }],
                                 /**引用 代碼塊 */
@@ -137,7 +146,7 @@
                                 [{ font: ['Lato', 'Noto-Sans-TC', 'Noto-Serif-TC', 'Playfair-Display', false] }],
                                 /**字體大小 */
                                 //[{ size: ["small", false, "large", "huge"] }],
-                                [{ size: ['10px', false, '14px', '16px', '18px', '20px'] }],
+                                [{ size: ['10px', false, '16px', '20px', '26px', '32px'] }],
                                 /**標題 */
                                 [{ header: [1, 2, 3, 4, false] }],
                             ]
@@ -347,11 +356,12 @@
        /***Dont scoped Here **/
        /***Dont scoped Here **/
     .editor_container {
-        max-width: 65vw;
+        width: 100%;
         margin: 0 auto;
-        padding: 50px 0;
+        padding: 10px 0;
     }    
-    .editor_container .quill-editor {        
+    .editor_container .quill-editor {
+        max-width: 100vw;        
         min-height: 200px;
         max-height: 500px;
         overflow-y: auto;
@@ -364,23 +374,24 @@
     .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="10px"]::before,
     .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="10px"]::before {
         content: "10px";
-    }
-    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="14px"]::before,
-    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="14px"]::before {
-        content: "14px";
-    }
+    }    
     .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="16px"]::before,
     .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="16px"]::before {
         content: "16px";
-    }
-    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="18px"]::before,
-    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="18px"]::before {
-        content: "18px";
-    }
+    }    
     .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="20px"]::before,
     .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="20px"]::before {
         content: "20px";
     }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="26px"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="26px"]::before {
+        content: "26px";
+    }
+    .ql-snow .ql-picker.ql-size .ql-picker-label[data-value="32px"]::before,
+    .ql-snow .ql-picker.ql-size .ql-picker-item[data-value="32px"]::before {
+        content: "32px";
+    }
+
 
     .ql-snow .ql-picker.ql-header .ql-picker-label::before,
     .ql-snow .ql-picker.ql-header .ql-picker-item::before {

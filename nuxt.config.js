@@ -36,10 +36,7 @@ module.exports = {
 	** Global CSS
 	*/
 	css: [
-		'element-ui/lib/theme-chalk/index.css', //used by element-ui
-		'quill/dist/quill.snow.css',
-		'quill/dist/quill.bubble.css',
-		'quill/dist/quill.core.css'
+		'element-ui/lib/theme-chalk/index.css', //used by element-ui		
 	],
 
 	/*
@@ -75,7 +72,7 @@ module.exports = {
 		//list the icons you want to add, not listed icons will be tree-shaked
 		icons: {
 			//Which icons you will use. FontAwesome currently supports 5 icon styles of which 2 are freely available.
-			solid: ['faHome','faHeart'],
+			solid: ['faHome', 'faHeart', 'faEye'],
 			brands: []
 		}
 	},

@@ -33,6 +33,7 @@
             @handleSizeChange="handleSizeChange"
             @handleIndexChange="handleIndexChange"
             @superFetchAll="handleDataList"
+            @createGoods="handleCreateGoods"
         >
         </dataTable>
     </div>    
@@ -42,12 +43,14 @@
     import dataTable from '@/components/admin/table/dataTable'
     import factory_goods from '@/plugins/mixins/admin/table/factory_goods'
     import deleteImg from '@/plugins/mixins/admin/deleteImg'
+    import changeStatus from '@/plugins/mixins/admin/table/changeStatus'
     import getBrandsList from '@/plugins/mixins/admin/table/getBrandsList'
     import notify from '@/plugins/mixins/admin/notify'
 
+    import { faCheckCircle, faEye, faCartPlus } from '@fortawesome/free-solid-svg-icons'
     export default {
         layout: 'admin',
-        mixins: [factory_goods, deleteImg, notify, getBrandsList],
+        mixins: [factory_goods, deleteImg, notify, getBrandsList, changeStatus],
         meta: {
             title: '管理員列表'
         },
@@ -57,6 +60,7 @@
                     title:'商品列表',
                     serverController: 'goods',
                     afterSavePushTo: 'factory_Goods',//路由名稱
+                    modelName: 'Goods',
                     manager_id: this.$store.state.auth.id,
                     bradnIdList:[],
                     brand_id:'',
@@ -71,10 +75,102 @@
                 list: [],
                 imageFolder: `${process.env.BASE_URL}/uploads/`,
                 columns: [
+                    {
+                        prop: 'goods_sn',
+                        label: '商品型號',
+                        align: 'left',
+                        width: 50,                        
+                    },
+                    {
+                        prop: 'title',
+                        label: '商品名稱',
+                        align: 'left',
+                        width: 100,
+                        render: (h, params) => {
+                            if(this.$_.isEmpty(params.row.title)) {
+                                return h('p', {
+                                    class: 'text-red-600 text-xs'
+                                }, '無內容檔案,將被自動刪除!')
+                            }
+                        }
+                    },
+                    {
+                        prop: 'click_count',
+                        label: '被瀏覽數',
+                        align: 'left',
+                        width: 50,
+                        render: (h, params) => {
+                            return h('span', {
+                                    class:'text-green-600',                                
+                                },
+                                [                                
+                                    h('fa-icon',{ props:{ icon: faEye,}}),
+                                    ` ${params.row.click_count}`,                            
+                                ]
+                            )
+                        }
+                    },
+                    {
+                        prop: 'has_buy',
+                        label: '已採購數',
+                        align: 'left',
+                        width: 50,
+                    },
+                    {
+                        prop: 'status',
+                        label: '上架中?',
+                        align: 'center',
+                        width:  50,
+                        render: (h, params) => {
+                            return h('fa-icon', {
+                                props:{
+                                    icon: faCheckCircle,
+                                },
+                                class:params.row.status === 0 ? 'cursor-pointer text-gray-300  text-xl' : 'cursor-pointer text-green-600 text-xl',
+                                on: {                                    
+                                    click: async() => {                                        
+                                        const res = await this.changeIconAndUpdate(this.config.modelName, params.row._id, 'status', params.row.status)
+                                        if(res.success){
+                                            if(params.row.status == 0) {
+                                                params.row.status = 1
+                                            }else {
+                                                params.row.status = 0
+                                            }
+                                        }
+                                    }
+                                },
+                            },)
+                        }
+                    },
                 ],
             };
         },
+        computed:{
+            faCheckCircle() {
+                return faCheckCircle
+            },
+            faEye() {
+                return faEye
+            },
+            faCartPlus() {
+                return faCartPlus
+            }
+        },
         methods: {
+            async handleCreateGoods() {
+                try{
+                    const { id } = await this.$axios.$post(`${process.env.EGG_API_URL}/admin/${this.config.serverController}`,{ brand_id: this.$store.state.admin.currentBrandId })
+                    this.$router.push(`/admin/factory_Goods/edit/${id}`) 
+                }catch (err) {
+                    //Browser ERROR 
+                    console.log(err)                  
+                    this.$message({                        
+                        message: '新增失敗,請聯絡管理員!!',
+                        type: 'error',
+                        customClass: 'bg-red-200'
+                    })
+                }
+            },
             async showProductsList(currentBrandId) {
                 //set current brand_id in brand of store
                 this.$store.dispatch('admin/setCurrentBrandId', currentBrandId)

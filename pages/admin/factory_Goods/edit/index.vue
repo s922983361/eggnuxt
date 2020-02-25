@@ -41,7 +41,7 @@
 
                 formModels: [
 
-                    //other in viewPage
+                    //description in viewPage
                     {                        
                         label: '商品詳情',
                         prop: 'goods_content',
@@ -51,7 +51,7 @@
                         uploadFile : `goodsContentImg/${this.$store.state.admin.currentBrandId}`,
                         imageFolder: `${process.env.BASE_URL}/uploads/`,
                         //editor Data
-                        maxLength: 100, //the maxlength words in editor you can write
+                        maxLength: 4000, //the maxlength words in editor you can write
                         placeholder: '請在此輸入.....',
                         position: 'description-response-full',//['other-response-left', 'other-response-right', 'other-response-full','other-response-checkbox']
                     },
@@ -75,6 +75,18 @@
                         position: 'size-response-left',//['other-response-left', 'other-response-right', 'other-response-full','other-response-checkbox'] 
                         multiple: false,
                         options:[],
+                    },
+                    //images in viewPage
+                    {                        
+                        label: '上傳商品副圖',
+                        //prop: 'goods_content',
+                        type: 'image_list',//['input','select','checkbox','textarea','image_list','editor']
+                        //elupload Data
+                        action: '/api/admin/upload',
+                        uploadFile : `goodsImg/${this.$store.state.admin.currentBrandId}`,
+                        imageFolder: `${process.env.BASE_URL}/uploads/`,
+                        fileList: [],
+                        position: 'images-response-full',//['other-response-left', 'images-response-right', 'images-response-full','images-response-checkbox']
                     },
                 ],
             };

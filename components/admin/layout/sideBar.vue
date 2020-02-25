@@ -89,6 +89,18 @@
                     <i class="el-icon-goods"></i>                    
                     <span slot="title">商品列表 (goods)</span>                                
                 </el-menu-item>
+                <el-menu-item index="/admin/factory_NewProduct">                
+                    <i class="el-icon-sell"></i>                    
+                    <span slot="title">新品上架 (goods)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/factory_OnSale">                
+                    <i class="el-icon-shopping-cart-full"></i>                    
+                    <span slot="title">促銷活動 (goods)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/factory_Message">                
+                    <i class="el-icon-chat-line-round"></i>                    
+                    <span slot="title">發佈訊息 (goods)</span>                                
+                </el-menu-item>
             </el-menu-item-group>
         </el-submenu>
         <!-- 廠商功能 -->
@@ -102,6 +114,22 @@
                 <el-menu-item index="/admin/shop_Orders">                
                     <i class="el-icon-s-order"></i>
                     <span slot="title">訂單列表(orders)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/factory_Message">                
+                    <i class="el-icon-s-goods"></i>                    
+                    <span slot="title">廠商採購 (goods)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/factory_Message">                
+                    <i class="el-icon-goods"></i>                    
+                    <span slot="title">同行採購 (goods)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/factory_Message">                
+                    <i class="el-icon-upload"></i>                    
+                    <span slot="title">同行銷貨 (goods)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/factory_Message">                
+                    <i class="el-icon-chat-line-round"></i>                    
+                    <span slot="title">發佈訊息 (goods)</span>                                
                 </el-menu-item>
             </el-menu-item-group>
         </el-submenu>

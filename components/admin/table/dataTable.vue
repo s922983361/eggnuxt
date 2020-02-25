@@ -1,7 +1,8 @@
 <template>
     <viewPage>
         <template slot="left-field">
-            <el-button type="primary" icon="el-icon-circle-plus-outline" size="medium" plain @click="$router.push(`/admin/${ page__addPushTo}/edit`)">新增</el-button>
+            <el-button type="primary" icon="el-icon-circle-plus-outline" size="medium" plain v-if="$route.path === '/admin/factory_Goods'" @click="createGoods">新增</el-button>
+            <el-button type="primary" icon="el-icon-circle-plus-outline" size="medium" plain v-else @click="$router.push(`/admin/${ page__addPushTo}/edit`)">新增</el-button>
         </template>
 
         <template slot="search-field">
@@ -195,6 +196,9 @@
             } 
         },        
         methods: {
+            createGoods () {
+                this.$emit('createGoods')
+            },
             superFetchAll () {
                 this.$emit('superFetchAll');
             },
