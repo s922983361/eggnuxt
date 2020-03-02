@@ -15,8 +15,8 @@
                 </el-popover>
             </template>
         </el-input>
-        <div v-show="temp.length > 0">
-            <ul v-for="(item, index) in temp" :key="index" class="text-lg">
+        <div v-show="cardList.length > 0">
+            <ul v-for="(item, index) in cardList" :key="index" class="text-lg">
                 <li>
                     <p class="ml-6">{{ item }} 
                         <i class="el-icon-circle-close text-md float-right text-red-300 hover:text-red-700 cursor-pointer mr-5 mt-4" @click="remove(index)"></i></p> 
@@ -44,8 +44,13 @@
         data () {
             return {
                 addValue: '',
-                temp:this.cardListData
+                temp:[]
             };
+        },
+        computed: {
+            cardList() {
+                return this.temp = this.cardListData
+            }
         },
         methods: {
             async addToTemp() {

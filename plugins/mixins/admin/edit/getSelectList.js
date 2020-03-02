@@ -14,18 +14,25 @@ export default {
                 // get selectList 
                 const { resCode, data } = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/common/getList/${modelName}`)                
                 if(resCode !== 90500) {
-                    if(!this.$_.isEmpty(data)) { 
+                    if(!this.$_.isEmpty(data)) {
+                        //extend for prop children component
+                        if(modelName === 'GoodsColor') {
+                            //add select obj key in 
+                            data.forEach(item => {
+                                item['color'] = item.value
+                                item['value'] = item._id
+                                item['label'] = item[field]                                
+                            }) 
+                            obj.options = data
+                            if(!this.$_.isUndefined(this.colorSelectOption)) this.colorSelectOption = data
+                            return
+                        }
                         //add select obj key in 
                         data.forEach(item => {
                             item['value'] = item._id
                             item['label'] = item[field]
                         }) 
-                        obj.options = data
-                        
-                        //extend for prop children component
-                        if(modelName === 'GoodsColor' && !this.$_.isUndefined(this.colorSelectOption)) {
-                            this.colorSelectOption = data
-                        }
+                        obj.options = data                        
                     }
                     return
                 }

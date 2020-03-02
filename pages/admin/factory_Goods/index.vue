@@ -92,6 +92,7 @@
                                     class: 'text-red-600 text-xs'
                                 }, '無內容檔案,將被自動刪除!')
                             }
+                            return h('p', {}, params.row.title)
                         }
                     },
                     {

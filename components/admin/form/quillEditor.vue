@@ -33,7 +33,7 @@
         
         <div class="quill-editor" 
             :style="{ height: quillEditorHeight + 'px' }"
-            :content="qcontent"
+            :content="editorContent"
             @change="onEditorChange($event)"
             @blur="onEditorBlur($event)"
             @focus="onEditorFocus($event)"
@@ -76,7 +76,7 @@
                 },
 
                 quillEditorHeight: 0,//總高度
-                qcontent: this.editorData,//內容
+                qcontent: '',//內容
                 placeholder: this.qplaceholder,
                 contentLength: 0,//總字符數
                 countHeightStyle: {},//記字器的高度
@@ -156,7 +156,7 @@
             };
         },
         created() {
-            //initial allImgPaths Array & currentImgPaths Array
+            //initial allImgPaths Array & currentImgPaths Array            
             this.getEditorImgArray()
             this.quillEditorHeight = document.body.clientHeight - this.editorHeight
         },
@@ -176,7 +176,10 @@
                     return { 'Authorization': this.$store.state.auth.token }
                 }                
                 return {}
-            },           
+            },
+            editorContent() {
+                return this.qcontent = this.editorData
+            }
         },
         methods: {
             /******************************************Edit callback functions *********************/

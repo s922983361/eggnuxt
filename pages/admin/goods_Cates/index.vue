@@ -83,6 +83,7 @@
                         label: '狀態',
                         align: 'center',
                         width:  70,
+                        //https://blog.csdn.net/HansExploration/article/details/83010327
                         render: (h, params) => {
                             return h('fa-icon', {
                                 props:{

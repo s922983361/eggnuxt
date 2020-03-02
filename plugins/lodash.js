@@ -41,7 +41,7 @@ Vue.prototype.$_ = {
     isEmpty,
 
     /**
-     * @desc 檢查value是否是为一个空对象，集合，映射或者set
+     * @desc 檢查 value 是否为有效的类数组长度
      * type: function(value)
      * param: value (*) :要檢查的值
      * return {boolean} 

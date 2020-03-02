@@ -16,7 +16,8 @@ export default {
             editData.manager_id = this.$store.state.auth.id
             //used by page of goods            
             editData.brand_id = this.$store.state.admin.currentBrandId
-
+            console.log(editData)
+            debugger
             try{
                 if(!this.$_.isEmpty(this.$route.params.id)) {
                     res = await this.$axios.$put(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${this.$route.params.id}`, editData) 

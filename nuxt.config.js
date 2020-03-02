@@ -49,6 +49,7 @@ module.exports = {
 		{ src: '@/plugins/helper.js', ssr: false },
 		{ src: '@/plugins/imgCompress.js', ssr: false },
 		{ src: '@/plugins/nuxt-quill-plugin.js', ssr: false },
+		{ src: '@/plugins/barcode.js', ssr: false },
 	],
 
 	/*

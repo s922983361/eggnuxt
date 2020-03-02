@@ -12,6 +12,7 @@
                 @editData="save"
                 @selectValueChanged="selectValueChanged"
                 @deleteDynamicForm="deleteDynamicForm"
+                @getGoodsCateId="getGoodsCateId"
                 ref="form"
             ></formEdit>
         </div>
@@ -39,7 +40,8 @@
                     imageFolder: `${process.env.BASE_URL}/uploads/`,
                 },                
                 attrData:[],//商品屬性
-                colorSelectOption:[],// Using for imageList component
+                // Using for imageList component & barCodeList component it is created by "getSelectList  GoodsColor " function 
+                colorSelectOption:[],
 
                 formModels: [
                     //basic in viewPage
@@ -284,13 +286,82 @@
                          * 4.
                          */
                         label: '上傳商品圖片',
-                        type: 'image_list',//['input','select','checkbox','textarea','image_list','editor']
+                        type: 'image_list',
                         //elupload Data
                         action: '/api/admin/upload',
                         uploadFile : `goodsImg/${this.$store.state.admin.currentBrandId}/${this.$route.params.id}`,
                         imageFolder: `${process.env.BASE_URL}/uploads/`,
                         position: 'images-response-full',//['other-response-left', 'images-response-right', 'images-response-full','images-response-checkbox']
                     },
+                    //barcode in viewPage
+                    {
+                        label: '輸入條碼:',
+                        type: 'barcode_list',//['input','select','checkbox','textarea']                         
+                        position: 'barCode-response-full',
+                        //el-tree Data
+                        data: [
+                            {
+                                label: '規格值',
+                                children: [
+                                    {
+                                        label: '顏色值一',                                        
+                                    },
+                                    {
+                                        label: '顏色值二',                                        
+                                    }
+                                ]
+                            },
+                            {
+                                label: '規格值',
+                                children: [
+                                    {
+                                        label: '顏色值一',                                        
+                                    },
+                                    {
+                                        label: '顏色值二',                                        
+                                    }
+                                ]
+                            },
+                        ],
+                        //https://blog.csdn.net/HansExploration/article/details/83010327
+                        renderContent: (h,{ node, data, store }) => {
+                            if(node.level == 1) {
+                                return (
+                                    <span class="custom-tree-node">
+                                        <span>{node.label}</span>
+                                    </span>
+                                )
+                            }else {
+                                return h(
+                                    'el-form-item',
+                                    {
+                                        props: {
+                                            label:`${node.label}:`
+                                        }
+                                    },
+                                    [   
+                                        h(
+                                            'input',
+                                            {
+                                                attrs: {
+                                                    type: 'text',
+                                                    maxlength: 13,
+                                                    placeholder: '請輸入 EAN-13'
+                                                },
+                                                class: 'w-full text-sm bg-gray-300 text-gray-700 rounded-full text-center',
+                                                domProps:{
+                                                    value: this.myValue
+                                                },
+                                                on:{
+                                                    input: val => this.myValue = val
+                                                }
+                                            },
+                                        )
+                                    ]
+                                )
+                            }
+                        },
+                    }
                 ],
             };
         },
@@ -299,7 +370,7 @@
             this.getSelectList('goods_color', this.config.relatedModel[0], 'name')
             // find GoodsType List
             this.getSelectList('goodsType_id', this.config.relatedModel[1], 'name')
-            // find Color List
+            // find goods_Cate List (level = 1)
             this.getSelectList('goods_Cate', this.config.relatedModel[3], 'name')
         },
         methods:{            
@@ -352,6 +423,9 @@
                 })
                 this.formModels = Arr
             },
+            async getGoodsCateId(goodsCateId) {
+                await this.getChildSelectList('goodsCate_id', this.config.relatedModel[3], 'name', 'pid', goodsCateId)
+            }
         },
         components: {
             formEdit

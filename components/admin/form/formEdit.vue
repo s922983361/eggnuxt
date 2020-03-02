@@ -147,7 +147,9 @@
                         <template v-else>
                             <el-select v-if="item.multiple" v-model="model[item.prop]" :placeholder="item.placeholder" multiple>
                                 <template v-for="option in item.options">
-                                    <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
+                                    <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled">
+                                        <span v-if="item.prop === 'goods_color'" :style="`background-color:${option.color}`" class="ml-1 rounded-full px-4 text-gray-200 text-center">{{ option.label }}</span>
+                                    </el-option>
                                 </template>
                             </el-select>
                             <el-select v-else v-model="model[item.prop]" :placeholder="item.placeholder" @change="(value) => valueSelected(value, item.prop)">
@@ -256,11 +258,28 @@
                             >
                         </quillEditor>
                     </div>
+                    <el-form-item
+                        v-if="item.type == 'barcode_list'"
+                        :label="item.label"
+                        :prop="item.prop"
+                        :key="item.prop"
+                        :rules="item.rules"
+                        >
+                        <barCodeList
+                            :colorSelectOption="color__SelectOption"
+                            :currentColorList="matchColor__Func"
+                            :currentAttrList="attrsHasInput__Func"
+                            >
+                            </barCodeList>
+                        </el-form-item>                    
                 </template>  
             </template>
         </viewPage> 
         <div class="clearfix border-t-2">
             <div class="float-right mr-10 mt-4">
+                <span>                    
+                    <p class="text-xs text-gray-500 mb-2"><i class="el-icon-warning-outline"></i>&nbsp;請確認表單六大選項完整填寫後再送出</p>
+                </span>
                 <el-button type="primary" @click="submitForm('Form')" icon="el-icon-s-promotion">送出</el-button>
                 <el-button @click="resetForm('Form')" icon="el-icon-refresh">表單重置</el-button>
             </div>
@@ -273,6 +292,7 @@
     import quillEditor from '@/components/admin/form/quillEditor'
     import cardList from '@/components/admin/form/cardList'
     import imageList from '@/components/admin/form/imageList'
+    import barCodeList from '@/components/admin/form/barCodeList'
     import notify from '@/plugins/mixins/admin/notify'
     import { showLoading, hideLoading } from '@/plugins/libs/loading'
 
@@ -295,8 +315,8 @@
         props: {
             imageFolder: { type: String, default: '' },
             serverController: { type: String, default: '' },
-            form__Models: { type: Array, default: [] },
-            color__SelectOption: { type: Array, default: [] },
+            form__Models: { type: Array },
+            color__SelectOption: { type: Array },
         },
         computed: { 
             getHeader__Func() {  
@@ -318,6 +338,10 @@
             matchColor__Func() {
                 if(!this.$_.isUndefined(this.model.goods_color)) return this.model.goods_color
                 return []
+            },
+            attrsHasInput__Func() {
+                if(!this.$_.isUndefined(this.model.goods_attrs)) return this.model.goods_attrs
+                return []
             }
         },
         mounted() {
@@ -327,7 +351,8 @@
                 .then(data =>{
                     this.model = data
                     //pass Data to parent component
-                    !this.$_.isEmpty(this.model.imageUrl) && this.$emit('getImageFileName', this.model.imageUrl)                    
+                    !this.$_.isEmpty(this.model.imageUrl) && this.$emit('getImageFileName', this.model.imageUrl)
+                    !this.$_.isEmpty(this.model.goods_Cate) && this.$emit('getGoodsCateId', this.model.goods_Cate)
                 })
                 .catch( err =>{
                     this.$message.error('500 服務器錯誤!, 數據導入失敗!');
@@ -352,9 +377,9 @@
                 this.$refs[formName].validate((valid) => {
                     if (valid) {
                         //if goodeTypeAttr obj is not null let keys of obj write in [attr_id_list] && values of obj write in [attr_value_list]
-                        if(Object.keys(this.goodeTypeAttr).length !== 0) {
-                            this.attr_id_list = Object.keys(this.goodeTypeAttr)
-                            this.attr_value_list = Object.values(this.goodeTypeAttr)
+                        if(Object.keys(this.goodeTypeAttr).length > 0) {
+                            this.model.attr_id_list = Object.keys(this.goodeTypeAttr)
+                            this.model.attr_value_list = Object.values(this.goodeTypeAttr)
                         }
                         //pass Data to parent component
                         this.$emit('editData', this.model);
@@ -470,23 +495,30 @@
                 this.model.goods_content_images.push(url)
             },
             setGoodsAttrArr(GoodsAttrArr) {
+                console.log('o:',GoodsAttrArr)
+                
                 this.model.goods_attrs = GoodsAttrArr
+                
             },
             //強制刷新
             change(e) {
                 this.$forceUpdate()
-            }            
+            },
+            handleNodeClick(data) {
+                console.log(data);
+            }           
         },
         components: {
             viewPage,
             quillEditor,
             imageList,
-            cardList
+            cardList,
+            barCodeList
         }
     }    
 </script>
 
-<style scoped>
+<style>
 .avatar-uploader .el-upload {
     
     border-radius: 6px;
@@ -510,5 +542,16 @@
     width: 108px;
     height: 108px;
     display: block;
+}
+.custom-tree-node {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    padding-right: 8px;
+}
+.el-form-item__content .el-tree .el-tree-node .el-tree-node__content {
+    height: 50px !important
 }
 </style>

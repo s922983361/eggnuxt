@@ -35,7 +35,8 @@
                         :key="item._id"
                         :value="item._id"
                         :label="item.label"
-                        >                        
+                        >
+                        <span :style="`background-color:${item.color}`" class="ml-1 rounded-full px-4 text-gray-200 text-center">{{ item.label }}</span>
                     </el-option>
                 </el-select>
             </div>           
@@ -93,9 +94,12 @@
             },
             /*** @desc let colorOption equal current ColorList*/
             colorOption__Func () {
-                let arr = this.colorSelectOption.filter((item) => {
-                    return (this.currentColorList.indexOf(item._id) != -1)
-                })
+                let arr = []
+                if(!this.$_.isEmpty(this.currentColorList)) {
+                    arr = this.colorSelectOption.filter((item) => {
+                        return (this.currentColorList.indexOf(item._id) != -1)
+                    })
+                }
                 return arr
             },
         },
@@ -107,6 +111,7 @@
                     if(!this.$_.isEmpty(res)) {
                         this.imageList = res.data
                         this.imageDataForElUpload = this.initDataForElUpload(this.imageList)
+                        this.color = this.initColorInModel(this.imageList)
                         return 
                     }
                     res.resCode == 90500 && await this.notifyFunc(res.resCode)                    
@@ -130,7 +135,21 @@
                     })
                 }
                 return array
-            },            
+            },
+            initColorInModel (array) {
+                let keys = []
+                let values = []
+                array.forEach((item) => { 
+                    keys.push(item.uid)
+                    values.push(item.color_id)
+                })
+                let result = values.reduce((result, filed, index) => {
+                    result[keys[index]] = filed
+                    return result
+                },{})
+                return result
+                //console.log(result)
+            },
             async ajaxUploadImage(data) {
                 try {
                     const res = await this.$axios.$post(`${process.env.EGG_API_URL}/admin/common/GoodsImage`, data)                    
@@ -165,7 +184,7 @@
                     })
                     try{
                         const res = await this.$axios.$put(`${process.env.EGG_API_URL}/admin/common/GoodsImage/uid/${uid}`, { color_id: '' })
-                        if(res) console.log('success1')
+                        
                     }catch(err) {
                         this.$message({                        
                             message: '發生不明的錯誤,請聯絡管理員!!',
@@ -178,7 +197,7 @@
 
                 try{
                     const res = await this.$axios.$put(`${process.env.EGG_API_URL}/admin/common/GoodsImage/uid/${uid}`, { color_id: value })
-                    if(res) console.log('success2')
+                    
                 }catch(err) {
                     this.$message({                        
                         message: '發生不明的錯誤,請聯絡管理員!!',
