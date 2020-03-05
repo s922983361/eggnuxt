@@ -30,8 +30,11 @@
                 buttonHasUpload: {}
             };
         },
-        created() {
-            this.getBarcodeAndInit()
+        mounted() {
+            /** @desc be sure this.barcode Model ready!!*/
+            this.$nextTick(() => {
+                this.getBarcodeAndInit()
+            })
         },        
         computed: {
             /**
@@ -75,10 +78,10 @@
                             } 
                         })
                         level1.children = arr
-                        data.push(level1)
-                        /** "this.barcode" will NOT be render in First time So i set sync Function here be sure sync tree Models*/ 
-                        this.syncBarcodeAndButtonHasUploadModel()
+                        data.push(level1)                        
                     })
+                    /** "this.barcode" will NOT be render in First time So i set sync Function here be sure sync tree Models*/ 
+                    //this.syncBarcodeAndButtonHasUploadModel()
                     return data
                 }
             },
@@ -120,7 +123,9 @@
                                             },
                                             on:{
                                                 /**it must set key in 'this.borcode' first when bind value to 'this.borcode' */                                          
-                                                input: (e) => this.barcode[`${data.attr}-${data.colorId}`] = e.target.value,
+                                                input: (e) => {
+                                                    this.barcode[`${data.attr}-${data.colorId}`] = e.target.value
+                                                },
                                                 /** Number only & 12 only*/
                                                 blur: (e) => {                                            
                                                     if(!this.$_.isEmpty(e.target.value) && !this.$helper.IsNumber(e.target.value)) {
@@ -187,8 +192,13 @@
                                                             }
                                                         }
                                                         /**Success to refresh All data */
-                                                        if(res) {
+                                                        if(res) {                                                            
                                                             await this.getBarcodeAndInit()
+                                                            this.$notify({
+                                                                message: '上傳成功!!',
+                                                                type: 'success',
+                                                                customClass: 'bg-green-200'
+                                                            })
                                                         }
                                                     }catch(err) {
                                                         this.$message({
@@ -218,6 +228,11 @@
                                                                 if(res) {
                                                                     delete this.barcodeDb[`${data.attr}-${data.colorId}`]
                                                                     this.buttonHasUpload[`${data.attr}-${data.colorId}`] = false
+                                                                    this.$notify({
+                                                                        message: '刪除成功!!',
+                                                                        type: 'success',
+                                                                        customClass: 'bg-green-200'
+                                                                    })
                                                                 }
                                                             }catch(err) {
                                                                 this.$message({                        

@@ -62,6 +62,26 @@
                     </el-row>
                 </el-tab-pane>
 
+                <el-tab-pane name="version" class="mt-8">
+                    <span slot="label"><i class="el-icon-connection"></i> 版本關聯</span>
+                    <el-row :gutter="10">
+                        <el-col :sm="24" :md="12">
+                            <slot name="version-response-left"></slot>
+                        </el-col>
+                        <el-col :sm="24" :md="12">
+                            <slot name="version-response-right"></slot>
+                        </el-col>               
+                        <el-col :sm="24">
+                            <slot name="version-response-full"></slot>
+                        </el-col>
+                        <el-col :sm="24" style="padding-left:40px">
+                            <el-row>
+                                <slot name="version-response-checkbox"></slot>
+                            </el-row>                    
+                        </el-col>               
+                    </el-row>
+                </el-tab-pane>
+
                 <el-tab-pane name="size" class="mt-8">
                     <span slot="label"><i class="el-icon-box"></i> 屬性與包裝</span>
                     <el-row :gutter="10">

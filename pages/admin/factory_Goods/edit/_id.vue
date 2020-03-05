@@ -13,6 +13,7 @@
                 @selectValueChanged="selectValueChanged"
                 @deleteDynamicForm="deleteDynamicForm"
                 @getGoodsCateId="getGoodsCateId"
+                @renderGoodsTypeAttr="renderGoodsTypeAttr"
                 ref="form"
             ></formEdit>
         </div>
@@ -239,7 +240,7 @@
                         prop: 'goods_color',
                         type: 'select',//['input','select','checkbox','textarea'] 
                         placeholder: 'please choose colors',
-                        position: 'other-response-full',//['other-response-left', 'other-response-right', 'other-response-full','other-response-checkbox'] 
+                        position: 'other-response-right',//['other-response-left', 'other-response-right', 'other-response-full','other-response-checkbox'] 
                         multiple: true,
                         options:[],
                     },
@@ -258,7 +259,14 @@
                         popoverClass: 'text-blue-700 text-lg',
                         popoverElIcon: 'el-icon-question',
                     },
-
+                     //version in viewPage
+                    {                        
+                        label: '版本關聯:',
+                        prop: 'goods_version',
+                        type: 'transfer',
+                        position: 'version-response-full',
+                        
+                    },
                     //other in viewPage
                     {                        
                         label: '商品類別:',
@@ -378,54 +386,67 @@
                 if(prop === 'goodsType_id') {
                     this.$refs.form.clearGoodeTypeAttr()
                     await this.deleteDynamicForm()
-                    const { data } = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/common/${this.config.relatedModel[2]}/goodsType_id/${id}`)
-
-                    let arr = data.map((item) => {
-                        let obj = {}
-                        //標示動態生成的數據格式(表單重置時標示刪除使用)
-                        obj.dynamic = true
-                        obj.label = item.name
-                        //以id當goodeTypeAttr索引值
-                        obj.prop = item._id
-                        //控制組件值綁定在 goodeTypeAttr
-                        obj.is_goodeTypeAttr = true
-                        //渲染組件樣式
-                        if(item.attr_type === '1') obj.type = 'input'
-                        if(item.attr_type === '2') obj.type = 'textarea'
-                        if(item.attr_type === '3') {
-
-                            let options = []
-                            item.attr_value.split(";").forEach((optionItem) => {
-                                let obj = {}
-                                obj.value = optionItem
-                                obj.label = optionItem
-                                options.push(obj)
-                            })
-                            obj.type = 'select'
-                            obj.multiple = false
-                            obj.options = options
-                        }
-                        obj.position = 'size-response-full'                    
-                        return obj
-                    })               
-                    return this.formModels = this.formModels.concat(arr)
+                    await this.renderGoodsTypeAttr(id)
                 }
                 if(prop === 'goods_Cate') {
                     if(!this.$_.isUndefined(this.$refs.form.model.goodsCate_id)) this.$refs.form.model.goodsCate_id = ''
                     await this.getChildSelectList('goodsCate_id', this.config.relatedModel[3], 'name', 'pid', id)
                     return 
                 }
-                
             },
+            /**@desc reset "this.formModels" after changing goodsType */
             async deleteDynamicForm() {
                 let Arr = this.formModels.filter((item) => {
                     return item.dynamic !== true
                 })
                 this.formModels = Arr
             },
+            /**@desc using "goodsCateId(level = 1)"" to fetch  goodsCate(level = 2)*/
             async getGoodsCateId(goodsCateId) {
                 await this.getChildSelectList('goodsCate_id', this.config.relatedModel[3], 'name', 'pid', goodsCateId)
-            }
+            },
+            async renderGoodsTypeAttr(GoodsTypeId) {
+                const { data } = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/common/${this.config.relatedModel[2]}/goodsType_id/${GoodsTypeId}`)
+                let arr = data.map((item) => {
+                    let obj = {}
+                    //標示動態生成的數據格式(表單重置時標示刪除使用)
+                    obj.dynamic = true
+                    obj.label = item.name
+                    //以id當goodeTypeAttr索引值
+                    obj.prop = item._id
+                    //控制組件值綁定在 goodeTypeAttr
+                    obj.is_goodeTypeAttr = true
+                    //渲染組件樣式
+                    if(item.attr_type === '1') {
+                        obj.type = 'input'
+                        obj.rules = [                            
+                            { max: 50, message: '太長(50個字)', trigger: 'blur' },
+                        ]
+                    }
+                    if(item.attr_type === '2') {
+                        obj.type = 'textarea'
+                        obj.rules = [                            
+                            { max: 100, message: '太長(100個字)', trigger: 'blur' },
+                        ]
+                    }
+                    if(item.attr_type === '3') {
+                        let options = []
+                        item.attr_value.split(";").forEach((optionItem) => {
+                            let obj = {}
+                            obj.value = optionItem
+                            obj.label = optionItem
+                            options.push(obj)
+                        })
+                        obj.type = 'select'
+                        obj.multiple = false
+                        obj.options = options
+                    }
+                    obj.position = 'size-response-full'                    
+                    return obj
+                }) 
+                
+                return this.formModels = this.formModels.concat(arr)
+            },
         },
         components: {
             formEdit

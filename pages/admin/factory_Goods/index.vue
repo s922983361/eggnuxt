@@ -63,7 +63,7 @@
                     modelName: 'Goods',
                     manager_id: this.$store.state.auth.id,
                     bradnIdList:[],
-                    brand_id:'',
+                    brand_id: this.$store.state.admin.currentBrandId,
                     superAdminOpen: false
                 },
                 //props
@@ -179,6 +179,7 @@
             }
         },
         created() {
+            //get All Brands this Manager own
             this.getBrandsList(this.config.manager_id)
             !this.$_.isEmpty(this.config.brand_id) && this.brandHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
         },

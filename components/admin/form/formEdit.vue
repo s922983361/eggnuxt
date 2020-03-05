@@ -152,7 +152,7 @@
                                     </el-option>
                                 </template>
                             </el-select>
-                            <el-select v-else v-model="model[item.prop]" :placeholder="item.placeholder" @change="(value) => valueSelected(value, item.prop)">
+                            <el-select v-else v-model="model[item.prop]" :placeholder="item.placeholder" @change="(value) => valueSelected(value, item.prop)" @visible-change="($event) => beforeSelected($event, item.prop)">
                                 <template v-for="option in item.options">
                                     <el-option :label="option.label" :value="option.value" :key="option.index" :disabled="option.disabled"></el-option>
                                 </template>
@@ -245,19 +245,7 @@
                         </el-checkbox>
 
                         </el-col>
-                    <div v-if="item.type == 'editor'" :key="item.prop">
-                        <quillEditor                             
-                            :editorData="model[item.prop]"
-                            :qplaceholder="item.placeholder"
-                            :maxLength="item.maxLength"
-                            :action="item.action"
-                            :uploadFile="item.uploadFile"
-                            :imageFolder="item.imageFolder"
-                            @quillEditorData="setGoodsContent"
-                            ref="myQuillEditor"
-                            >
-                        </quillEditor>
-                    </div>
+                    
                     <el-form-item
                         v-if="item.type == 'barcode_list'"
                         :label="item.label"
@@ -271,14 +259,34 @@
                             :currentAttrList="attrsHasInput__Func"
                             >
                             </barCodeList>
-                        </el-form-item>                    
+                        </el-form-item>
+                    <div v-if="item.type == 'editor'" :key="item.prop">
+                        <quillEditor                             
+                            :editorData="model[item.prop]"
+                            :qplaceholder="item.placeholder"
+                            :maxLength="item.maxLength"
+                            :action="item.action"
+                            :uploadFile="item.uploadFile"
+                            :imageFolder="item.imageFolder"
+                            @quillEditorData="setGoodsContent"
+                            ref="myQuillEditor"
+                            >
+                        </quillEditor>
+                    </div>
+                    <div v-if="item.type == 'transfer'" :key="item.prop">
+                        <transferList
+                            :transferData="model[item.prop]"
+                            @setGoodsVersion="setGoodsVersion"
+                        >
+                        </transferList>
+                    </div>
                 </template>  
             </template>
         </viewPage> 
         <div class="clearfix border-t-2">
             <div class="float-right mr-10 mt-4">
                 <span>                    
-                    <p class="text-xs text-gray-500 mb-2"><i class="el-icon-warning-outline"></i>&nbsp;請確認表單六大選項完整填寫後再送出</p>
+                    <p class="text-xs text-gray-500 mb-2"><i class="el-icon-warning-outline"></i>&nbsp;請確認表單所有選項完整填寫後再送出</p>
                 </span>
                 <el-button type="primary" @click="submitForm('Form')" icon="el-icon-s-promotion">送出</el-button>
                 <el-button @click="resetForm('Form')" icon="el-icon-refresh">表單重置</el-button>
@@ -293,6 +301,7 @@
     import cardList from '@/components/admin/form/cardList'
     import imageList from '@/components/admin/form/imageList'
     import barCodeList from '@/components/admin/form/barCodeList'
+    import transferList from '@/components/admin/form/transferList'
     import notify from '@/plugins/mixins/admin/notify'
     import { showLoading, hideLoading } from '@/plugins/libs/loading'
 
@@ -353,6 +362,8 @@
                     //pass Data to parent component
                     !this.$_.isEmpty(this.model.imageUrl) && this.$emit('getImageFileName', this.model.imageUrl)
                     !this.$_.isEmpty(this.model.goods_Cate) && this.$emit('getGoodsCateId', this.model.goods_Cate)
+                    //extend init goodeTypeAttr in factory_Goods page
+                    this.initGoodeTypeAttrModel(data)                    
                 })
                 .catch( err =>{
                     this.$message.error('500 服務器錯誤!, 數據導入失敗!');
@@ -372,6 +383,23 @@
             } 
         },
         methods: {
+            // fetch Data from serverController after mounted
+            async fetchDetail(serverController, id) { 
+                try {
+                    const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${serverController}/${id}`)
+                    if(!this.$_.isEmpty(res)) {
+                        return res.data
+                    }
+                    res.resCode == 90500 && await this.notifyFunc(res.resCode)                    
+                }               
+                catch(err) {
+                    this.$message({                        
+                        message: '發生不明的錯誤,請聯絡管理員!!',
+                        type: 'error',
+                        customClass: 'bg-red-200'
+                    })
+                }
+            }, 
             //submit Form After validate Func
             async submitForm(formName) {
                 this.$refs[formName].validate((valid) => {
@@ -379,7 +407,10 @@
                         //if goodeTypeAttr obj is not null let keys of obj write in [attr_id_list] && values of obj write in [attr_value_list]
                         if(Object.keys(this.goodeTypeAttr).length > 0) {
                             this.model.attr_id_list = Object.keys(this.goodeTypeAttr)
-                            this.model.attr_value_list = Object.values(this.goodeTypeAttr)
+                            //escape value Array
+                            this.model.attr_value_list = Object.values(this.goodeTypeAttr).map((item) => {                                
+                                return item = this.$_.escape(item)
+                            })
                         }
                         //pass Data to parent component
                         this.$emit('editData', this.model);
@@ -401,29 +432,12 @@
                 this.$refs[formName].resetFields()
             },
             clearGoodeTypeAttr() {
-                if(Object.keys(this.goodeTypeAttr).length !== 0) {
+                if(Object.keys(this.goodeTypeAttr).length > 0) {
                     for (const prop of Object.getOwnPropertyNames(this.goodeTypeAttr)) {
                         delete this.goodeTypeAttr[prop];
                     }
                 }                
-            },
-            // fetch Data from serverController after mounted
-            async fetchDetail(serverController, id) { 
-                try {
-                    const res = await this.$axios.$get(`${process.env.EGG_API_URL}/admin/${serverController}/${id}`)
-                    if(!this.$_.isEmpty(res)) {
-                        return res.data
-                    }
-                    res.resCode == 90500 && await this.notifyFunc(res.resCode)                    
-                }               
-                catch(err) {
-                    this.$message({                        
-                        message: '發生不明的錯誤,請聯絡管理員!!',
-                        type: 'error',
-                        customClass: 'bg-red-200'
-                    })
-                }
-            },         
+            },                    
             beforeUploadFile(file) { 
                 /**
                  * @desc element-ui el-upload component hook
@@ -483,11 +497,14 @@
                     customClass: 'bg-red-200'
                 })
             },
-            async valueSelected(value, prop){ 
-                
-                //pass Data to parent component
-                this.$emit('selectValueChanged', value, prop);
+            beforeSelected($event, prop) {
+                //option is opened
+                if($event === true && prop === 'goodsType_id') alert('變更商品類別將會清空下列已輸入資訊, 是否繼續?')
             },
+            valueSelected(value, prop){ 
+                //pass Data to parent component
+                this.$emit('selectValueChanged', value, prop)
+            },            
             setGoodsContent(html) {
                 this.model.goods_content = html
             },
@@ -495,13 +512,27 @@
                 this.model.goods_content_images.push(url)
             },
             setGoodsAttrArr(GoodsAttrArr) {
-                console.log('o:',GoodsAttrArr)
-                
                 this.model.goods_attrs = GoodsAttrArr
-                
+            },
+            setGoodsVersion(GoodsVersionArr) {
+                this.model.goods_version = GoodsVersionArr
+            },
+            initGoodeTypeAttrModel(data) {
+                let keys = []
+                let values = []
+                if(!this.$_.isUndefined(data.attr_value_list) && !this.$_.isEmpty(data.attr_value_list)) {
+                    keys = data.attr_id_list
+                    values = data.attr_value_list
+                    let result = values.reduce((result, filed, index) => {
+                        result[keys[index]] = filed
+                        return result
+                    },{})
+                    this.$emit('renderGoodsTypeAttr', data.goodsType_id)
+                    return this.goodeTypeAttr = result
+                }
             },
             //強制刷新
-            change(e) {
+            change(value) {
                 this.$forceUpdate()
             },
             handleNodeClick(data) {
@@ -513,7 +544,8 @@
             quillEditor,
             imageList,
             cardList,
-            barCodeList
+            barCodeList,
+            transferList
         }
     }    
 </script>

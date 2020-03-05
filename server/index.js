@@ -80,7 +80,8 @@ router.use('/api/common', require('./controller/common'))// common includ [svg-c
 
 /** private API */
 router.use('/api/admin/upload', auth(), require('./controller/common/upload'))//upload image API 
-router.use('/api/admin/deleteImg', auth(), require('./controller/common/deleteImg'))//delete image API 
+router.use('/api/admin/deleteImg', auth(), require('./controller/common/deleteImg'))//delete image API
+router.use('/api/admin/deleteFolder', auth(), require('./controller/common/deleteFolder'))//delete Folder API 
 
 /*********************** Error Listen ***********************/
 app.on('error', (err, ctx) => {

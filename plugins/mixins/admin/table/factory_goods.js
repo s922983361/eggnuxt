@@ -108,7 +108,7 @@ export default {
          * @param {*} row scope row data form Datatable component
          */
         handleDel (row) {
-            let tips = ''
+            let tips = '所有內容包含內容圖片/ 商品詳情/ 銷售數字/ 商品排行/..., 資料庫內有關將一併刪除無法復原! 是否確定刪除?'
                         
             this.$confirm(`是否刪除 "${row.name ? row.name : row.title }"? ${tips}`, '提示', {
                 confirmButtonText: '確定',
@@ -120,7 +120,15 @@ export default {
                     const res = await this.$axios.$delete(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${row._id}`)
                     
                     if(res.resCode !== 90500) this.brandHandleDataList(this.pagination.pageIndex, this.pagination.pageSize)
+                    //Delete image if imageUrl exsit in table
                     if(!this.$_.isEmpty(row.imageUrl)) await this.deletImg(row.imageUrl)
+
+                    const goodsImageFolder = `goodsImg/${this.$store.state.admin.currentBrandId}/${row._id}`
+                    const goodsContentImageFolder = `goodsContentImg/${this.$store.state.admin.currentBrandId}/${row._id}`
+                    //Delete All Images of this goods
+                    await this.deletAllImg(goodsImageFolder)
+                    //Delete All ContentImages of this goods
+                    await this.deletAllImg(goodsContentImageFolder)
                     await this.notifyFunc(res.resCode)
                 }catch (err){
                     //Browser ERROR
