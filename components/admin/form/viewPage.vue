@@ -143,6 +143,49 @@
                 </el-tab-pane>
             </el-tabs>
         </el-main>
+        <el-main v-else-if="is_Articles">
+            <el-tabs v-model="activeName">
+                <el-tab-pane name="basic" class="mt-8">
+                    <span slot="label"><i class="el-icon-s-order"></i> 文章基本信息</span>
+                    <el-row :gutter="10">
+                        <el-col :sm="24" :md="12">
+                            <slot name="basic-response-left"></slot>
+                        </el-col>
+                        <el-col :sm="24" :md="12">
+                            <slot name="basic-response-right"></slot>
+                        </el-col>               
+                        <el-col :sm="24">
+                            <slot name="basic-response-full"></slot>
+                        </el-col>
+                        <el-col :sm="24" style="padding-left:40px">
+                            <el-row>
+                                <slot name="basic-response-checkbox"></slot>
+                            </el-row>                    
+                        </el-col>               
+                    </el-row>
+                </el-tab-pane>
+
+                <el-tab-pane name="description">
+                    <span slot="label"><i class="el-icon-edit"></i> 文章內容</span>
+                    <el-row :gutter="10">
+                        <el-col :sm="24" :md="12">                        
+                            <slot name="description-response-left"></slot>
+                        </el-col>
+                        <el-col :sm="24" :md="12">
+                            <slot name="description-response-right"></slot>
+                        </el-col>               
+                        <el-col :sm="24">
+                            <slot name="description-response-full"></slot>
+                        </el-col>
+                        <el-col :sm="24" style="padding-left:40px">
+                            <el-row>
+                                <slot name="description-response-checkbox"></slot>
+                            </el-row>                    
+                        </el-col>               
+                    </el-row>
+                </el-tab-pane>
+            </el-tabs>
+        </el-main>
         <el-main v-else>
             <el-row :gutter="10">
                 <el-col :sm="24" :md="12">
@@ -175,6 +218,9 @@
         computed:{
             is_Goods() {
                 if(this.$route.path.includes('/admin/factory_Goods/edit')) return true
+            },
+            is_Articles() {
+                if(this.$route.path.includes('/admin/articles/edit')) return true
             }
         }
     }

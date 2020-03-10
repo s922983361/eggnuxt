@@ -3,7 +3,7 @@
         :model="model" 
         ref="Form" 
         label-width="100px" 
-        class="demo-ruleForm"
+        class="demo-ruleForm formEdit"
         >
         <viewPage>
             <template v-for=" item in form__Models"> 
@@ -268,7 +268,7 @@
                             :action="item.action"
                             :uploadFile="item.uploadFile"
                             :imageFolder="item.imageFolder"
-                            @quillEditorData="setGoodsContent"
+                            @quillEditorData="setEditorContent"
                             ref="myQuillEditor"
                             >
                         </quillEditor>
@@ -311,7 +311,7 @@
             return {
                 model: {                    
                     imageUrl: '',       //main image (Just one image in this page)                    
-                    goods_content: '',  //used by "goods" page
+                    editor_content: '', //used by "goods" page
                     goods_attrs: [],    //used by "goods" page
                     attr_type: '',      //used by "goods_Attr" page
                     attr_id_list: [],   //used by "goods" page
@@ -359,9 +359,10 @@
                 this.fetchDetail(this.serverController, this.$route.params.id)
                 .then(data =>{
                     this.model = data
-                    //pass Data to parent component
+                    //pass Data to parent component if usu _id.vue(edit/id) & "add page" does not exist
                     !this.$_.isEmpty(this.model.imageUrl) && this.$emit('getImageFileName', this.model.imageUrl)
                     !this.$_.isEmpty(this.model.goods_Cate) && this.$emit('getGoodsCateId', this.model.goods_Cate)
+                    !this.$_.isEmpty(this.model.article_Cate) && this.$emit('getArticleCateId', this.model.article_Cate)
                     //extend init goodeTypeAttr in factory_Goods page
                     this.initGoodeTypeAttrModel(data)                    
                 })
@@ -505,12 +506,9 @@
                 //pass Data to parent component
                 this.$emit('selectValueChanged', value, prop)
             },            
-            setGoodsContent(html) {
-                this.model.goods_content = html
-            },
-            setGoodsContentImages(url) {
-                this.model.goods_content_images.push(url)
-            },
+            setEditorContent(html) {
+                this.model.editor_content = html
+            },            
             setGoodsAttrArr(GoodsAttrArr) {
                 this.model.goods_attrs = GoodsAttrArr
             },
@@ -551,17 +549,17 @@
 </script>
 
 <style>
-.avatar-uploader .el-upload {
+.formEdit .avatar-uploader .el-upload {
     
     border-radius: 6px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
 }
-.avatar-uploader .el-upload:hover {
+.formEdit .avatar-uploader .el-upload:hover {
     border-color: #409EFF;
 }
-.avatar-uploader-icon {
+.formEdit .avatar-uploader-icon {
     border: 1px dashed #000;
     font-size: 28px;
     color: #8c939d;
@@ -570,12 +568,12 @@
     line-height: 108px;
     text-align: center;
 }
-.avatar {
+.formEdit .avatar {
     width: 108px;
     height: 108px;
     display: block;
 }
-.custom-tree-node {
+.formEdit .custom-tree-node {
     flex: 1;
     display: flex;
     align-items: center;
@@ -583,7 +581,10 @@
     font-size: 14px;
     padding-right: 8px;
 }
-.el-form-item__content .el-tree .el-tree-node .el-tree-node__content {
+.formEdit .el-form-item__content .el-tree .el-tree-node .el-tree-node__content {
     height: 50px !important
+}
+.formEdit .el-form-item .el-form-item__label {
+    border-bottom: 1px solid #959595;
 }
 </style>

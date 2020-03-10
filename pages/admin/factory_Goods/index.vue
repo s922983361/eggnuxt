@@ -77,15 +77,19 @@
                 columns: [
                     {
                         prop: 'goods_sn',
-                        label: '商品型號',
+                        label: '型號',
                         align: 'left',
-                        width: 50,                        
+                        width: 50,
+                        showIcon: true,
+                        icon: 'el-icon-bank-card',
                     },
                     {
                         prop: 'title',
                         label: '商品名稱',
                         align: 'left',
-                        width: 100,
+                        width: 150,
+                        showIcon: true,
+                        icon: 'el-icon-postcard',
                         render: (h, params) => {
                             if(this.$_.isEmpty(params.row.title)) {
                                 return h('p', {
@@ -99,7 +103,11 @@
                         prop: 'click_count',
                         label: '被瀏覽數',
                         align: 'left',
-                        width: 50,
+                        width: 80,
+                        showIcon: true,
+                        icon: 'el-icon-view',
+                        showTip: true,
+                        tipContent: '進入商品頁面瀏覽,並停留10秒後 "+ 1"',
                         render: (h, params) => {
                             return h('span', {
                                     class:'text-green-600',                                
@@ -115,13 +123,21 @@
                         prop: 'has_buy',
                         label: '已採購數',
                         align: 'left',
-                        width: 50,
+                        width: 80,
+                        showIcon: true,                        
+                        icon: 'el-icon-sold-out',
+                        showTip: true,
+                        tipContent: '已被加入採購清單且成交 "+ 加採購數量"',
                     },
                     {
                         prop: 'status',
-                        label: '上架中?',
+                        label: '上架中',
                         align: 'center',
-                        width:  50,
+                        width:  80,
+                        showIcon: true,                        
+                        icon: 'el-icon-check',
+                        showTip: true,
+                        tipContent: '綠色顯示為正在架上',
                         render: (h, params) => {
                             return h('fa-icon', {
                                 props:{
@@ -158,6 +174,7 @@
             }
         },
         methods: {
+            /**To create goods Id page without add Page*/
             async handleCreateGoods() {
                 try{
                     const { id } = await this.$axios.$post(`${process.env.EGG_API_URL}/admin/${this.config.serverController}`,{ brand_id: this.$store.state.admin.currentBrandId })

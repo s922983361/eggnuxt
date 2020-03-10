@@ -110,7 +110,7 @@
                         prop: 'description',
                         type: 'textarea',//['input','select','checkbox','textarea']
                         placeholder: '簡單的描述',
-                        rows: 20,
+                        rows: 5,
                         position: 'response-full',//['response-left', 'response-right', 'response-full']                        
                     },
                 ],

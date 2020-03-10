@@ -51,12 +51,16 @@
                         label: '模組名稱',
                         align: 'left',
                         width: 50,
+                        showIcon: true,
+                        icon: 'el-icon-star-off',
                     },                    
                     {
                         prop: 'type',
                         label: '節點',
                         align: 'center',
                         width: 50,
+                        showIcon: true,
+                        icon: 'el-icon-files',
                         render: (h, params) => {
                             return h('el-tag', {
                                 props: {
@@ -69,19 +73,25 @@
                         label: '操作',
                         align: 'left',
                         width: 50,
+                        showIcon: true,
+                        icon: 'el-icon-s-tools',
                     },
                     {
                         prop: 'url',
                         label: '操作URL',
                         align: 'left',
                         width: 100,
+                        showIcon: true,
+                        icon: 'el-icon-link',
                     }, 
                     {
                         prop: 'sort',
                         label: '排序',
                         align: 'center',
                         width: 50,
-                        sortable: true
+                        sortable: true,
+                        showIcon: true,
+                        icon: 'el-icon-sort',
                     },
                 ],
             };

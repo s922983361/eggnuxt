@@ -50,19 +50,25 @@
                         prop: '_id',
                         label: '管理員id',
                         align: 'left',
-                        width: 100,                        
-                    },                    
+                        width: 100,
+                        showIcon: true,
+                        icon: 'el-icon-user-solid',
+                    },
                     {
                         prop: 'name',
                         label: '管理員名稱',
                         align: 'left',
-                        width: 100,                        
+                        width: 100,
+                        showIcon: true,
+                        icon: 'el-icon-star-off',
                     },
                     {
                         prop: 'role_id',
                         label: '所屬角色',
                         align: 'left',
                         width: 100, 
+                        showIcon: true,
+                        icon: 'el-icon-user',
                         render: (h, params) => {
                             return h('p', {
                                 class: 'font-sans text-gray-800'

@@ -2,6 +2,17 @@
     <viewPage>
         <template slot="left-field">
             <el-button type="primary" icon="el-icon-circle-plus-outline" size="medium" plain v-if="$route.path === '/admin/factory_Goods'" @click="createGoods">新增</el-button>
+
+            <el-button 
+                type="primary" 
+                icon="el-icon-circle-plus-outline" 
+                size="medium" 
+                plain 
+                v-else-if="$route.path === '/admin/articles'" 
+                @click="createIdPage
+                ">新增
+                </el-button>
+
             <el-button type="primary" icon="el-icon-circle-plus-outline" size="medium" plain v-else @click="$router.push(`/admin/${ page__addPushTo}/edit`)">新增</el-button>
         </template>
 
@@ -53,7 +64,8 @@
         <el-table 
             id="printTableListData"
             :data="filterData__Func"
-            :default-sort = "{ prop: 'date', order: 'descending' }"           
+            :default-sort = "{ prop: 'date', order: 'descending' }"
+            :header-cell-style="tableHeaderColor"
             fit
             highlight-current-row
             >
@@ -66,6 +78,19 @@
                     :sortable="column.sortable"
                     :key="column._id"
                     >
+                    <template v-if="column.showIcon" slot="header">
+                        <i :class="column.icon"></i>
+                        <span>{{ column.label }}</span>
+                        <span v-if="column.showTip">
+                            <el-tooltip effect="light" :content="column.tipContent" placement="top">
+                                <i class="el-icon-question"></i>
+                            </el-tooltip>                            
+                        </span>                        
+                    </template>
+                    <template  v-else slot="header">                        
+                        {{ column.label }}
+                    </template>                    
+                    
                     <template slot-scope="scope">
                         <template v-if="!column.render">
                             <template v-if="column.is_image">
@@ -199,6 +224,9 @@
             createGoods () {
                 this.$emit('createGoods')
             },
+            createIdPage () {
+                this.$emit('createIdPage')
+            },
             superFetchAll () {
                 this.$emit('superFetchAll');
             },
@@ -219,6 +247,22 @@
                 this.$emit('handleIndexChange', this.tableCurrentPagination)
                 }
             },
+            tableHeaderColor({ row, column, rowIndex, columnIndex }) {
+                if (rowIndex === 0) {
+                    return 'background-color: #bfe7ff; color: #000; font-weight: 500;'
+                }
+            },
+            tableRenderHeader ( h, { column }) {
+                return h(
+                    'span',
+                    [
+                        h('span', column.label),
+                        h('i',{
+                            class: column.icon
+                        })
+                    ]
+                )
+            }
         },
         components: {
             viewPage,

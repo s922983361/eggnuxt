@@ -2,7 +2,7 @@
     <section class="editor_container">
         <el-upload
             v-show="elUpload.display"
-            class="avatar-uploader"
+            id="quillEditor"
 
             :action="action"
             :limit="5"
@@ -49,8 +49,7 @@
     /** require styles */
     import 'quill/dist/quill.core.css'
     import 'quill/dist/quill.snow.css'
-    import 'quill/dist/quill.bubble.css'
-    
+    import 'quill/dist/quill.bubble.css'    
     //import notify from '@/plugins/mixins/admin/notify'
     import deleteImg from '@/plugins/mixins/admin/deleteImg'
     import { showLoading, hideLoading } from '@/plugins/libs/loading'
@@ -104,11 +103,19 @@
                             handlers: {
                                 'image': () => { 
                                     if (this.$store.state.auth.is_super === true || this.$store.state.auth.memOnly === true) {
-                                        // 触发input框选择图片文件
-                                        document.querySelector('.avatar-uploader input').click()             
-                                    } else {
-                                        this.myQuillEditor.format('image', false)
+                                        if(this.allImgPaths.length > 5) {
+                                            this.$notify({
+                                                title: 'Info',
+                                                type: 'warning',
+                                                message: '最多只能上傳5張圖片!',
+                                                customClass: 'bg-yellow-200'
+                                            })
+                                            return this.myQuillEditor.format('image', false)
+                                        }
+                                        // 觸發input框選擇圖片文件
+                                        return document.querySelector('#quillEditor input').click()             
                                     }
+                                    return this.myQuillEditor.format('image', false)
                                 },
                                 'link': (value) => {
                                     if (value) {
@@ -320,16 +327,19 @@
                         arr.push(path)
                     }                    
                 }
-                this.currentImgPaths = arr
-                // listen image is need to delete?
-                let hasImgToDelete = (this.allImgPaths.length - this.currentImgPaths.length) > 0                
+                this.currentImgPaths = arr                
+                // listen image is need to delete?                
+                let hasImgToDelete = (this.allImgPaths.length - this.currentImgPaths.length) > 0
                 if(hasImgToDelete) {
-                    //Use array_Minus to  get image path between allImgPaths Array & currentImgPaths Array
-                    let imgPath = this.$helper.array_Minus(this.allImgPaths, this.currentImgPaths)                    
-                    this.deletImg(imgPath)
-                    // let length of allImgPaths Array equal length of currentImgPaths Array
-                    this.allImgPaths = this.currentImgPaths
+                    //Use array_Minus to  get image path between allImgPaths Array & currentImgPaths Array, return "Array"
+                    let imgPath = this.$helper.array_Minus(this.allImgPaths, this.currentImgPaths) 
+                    /** there is BUG here it is necessary to check "imgPath exsit"*/                   
+                    if(!this.$_.isEmpty(imgPath)) {
+                        this.deletImg(this.$_.toString(imgPath))
+                    }
                 }
+                // let length of allImgPaths Array equal length of currentImgPaths Array
+                this.allImgPaths = this.currentImgPaths
             },
             //initial allImgPaths Array & currentImgPaths Array
             getEditorImgArray() {

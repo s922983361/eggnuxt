@@ -53,16 +53,20 @@
                 columns: [
                     {
                         prop: 'imageUrl',
-                        label: '品牌LOGO',
+                        label: 'LOGO',
                         align: 'center',
                         width: 50,
-                        is_image: true //to show image                         
+                        is_image: true, //to show image 
+                        showIcon: true,
+                        icon: 'el-icon-picture', 
                     },
                     {
                         prop: 'name',
                         label: '品牌名稱',
                         align: 'left',
-                        width: 50,                        
+                        width: 50,
+                        showIcon: true,
+                        icon: 'el-icon-star-off',
                     },
                     {
                         prop: 'manager_id',
@@ -80,7 +84,9 @@
                         label: '創建時間',
                         align: 'center',
                         width: 50,
-                        sortable: true
+                        sortable: true,
+                        showIcon: true,
+                        icon: 'el-icon-time',
                     },   
                 ],
             };

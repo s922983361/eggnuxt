@@ -223,7 +223,7 @@
                     //description in viewPage
                     {                        
                         label: '商品詳情',
-                        prop: 'goods_content',
+                        prop: 'editor_content',//Editor 數據庫通用字段
                         type: 'editor',//['input','select','checkbox','textarea']
                         //elupload Data
                         action: '/api/admin/upload',
@@ -381,13 +381,16 @@
             // find goods_Cate List (level = 1)
             this.getSelectList('goods_Cate', this.config.relatedModel[3], 'name')
         },
-        methods:{            
+        methods:{           
             async selectValueChanged(id, prop) {
+                
                 if(prop === 'goodsType_id') {
                     this.$refs.form.clearGoodeTypeAttr()
                     await this.deleteDynamicForm()
                     await this.renderGoodsTypeAttr(id)
                 }
+                /** @desc Clear "Children select Value" & reset Option When "Parent Cate Select" changed !
+                */
                 if(prop === 'goods_Cate') {
                     if(!this.$_.isUndefined(this.$refs.form.model.goodsCate_id)) this.$refs.form.model.goodsCate_id = ''
                     await this.getChildSelectList('goodsCate_id', this.config.relatedModel[3], 'name', 'pid', id)
@@ -401,7 +404,9 @@
                 })
                 this.formModels = Arr
             },
-            /**@desc using "goodsCateId(level = 1)"" to fetch  goodsCate(level = 2)*/
+            /**@desc before mounted if level 1 of Cate exist
+            * 1. using "goodsCateId(level = 1)"" to fetch  goodsCate(level = 2)
+            */
             async getGoodsCateId(goodsCateId) {
                 await this.getChildSelectList('goodsCate_id', this.config.relatedModel[3], 'name', 'pid', goodsCateId)
             },

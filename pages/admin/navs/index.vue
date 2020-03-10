@@ -15,7 +15,6 @@
 
         @handleSizeChange="handleSizeChange"
         @handleIndexChange="handleIndexChange"
-        @superFetchAll="handleDataList"
     >
     </dataTable>
 </template>
@@ -26,24 +25,24 @@
     import changeStatus from '@/plugins/mixins/admin/table/changeStatus'
     import notify from '@/plugins/mixins/admin/notify'
 
-    import { faCheckCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
+    import { faCheckCircle } from '@fortawesome/free-solid-svg-icons'
     
     export default {
         layout: 'admin',
         mixins: [basic, notify, changeStatus],
         meta: {
-            title: '管理員角色列表'
+            title: '網站導航列表'
         },
         data () {
             return {
                 config: {
-                    title:'管理員角色列表',
-                    serverController: 'role',
-                    modelName: 'Role',
-                    afterSavePushTo: 'managers_Roles'//路由名稱
+                    title:'網站導航列表',
+                    serverController: 'nav',
+                    modelName: 'Nav',
+                    afterSavePushTo: 'navs'//路由名稱
                 },
                 //props
-                addPushTo: 'managers_Roles',//新增的路由目標
+                addPushTo: 'navs',//新增的路由目標
                 statusFilter: false,//是否需要狀態過濾
                 statusArray:[],//狀態的內容--狀態過濾使用,要依照status順序排列
                 timeFilter: false,//是否需要時間過濾
@@ -51,20 +50,38 @@
                 list: [],
                 columns: [
                     {
-                        prop: '_id',
-                        label: '管理員角色id',
-                        align: 'left',
-                        width: 100,
-                        showIcon: true,
-                        icon: 'el-icon-user-solid',
-                    },                    
-                    {
                         prop: 'title',
-                        label: '管理員角色名稱',
+                        label: '導航名稱',
                         align: 'left',
                         width: 100,
                         showIcon: true,
                         icon: 'el-icon-star-off',
+                    },
+                    {
+                        prop: 'link',
+                        label: '跳轉路由',
+                        align: 'left',
+                        width: 100,
+                        showIcon: true,
+                        icon: 'el-icon-link',                        
+                    },
+                    {
+                        prop: 'position',
+                        label: '放置位置',
+                        align: 'left',
+                        width: 100,
+                        showIcon: true,
+                        icon: 'el-icon-map-location',
+                        render: (h, params) => {
+                            return h('el-tag', 
+                                {
+                                    props: {
+                                        type: params.row.position === 1 ? '': params.row.position === 2 ? 'success' : params.row.position === 3 ? 'info' : params.row.position === 4 ? 'warning' : 'danger'
+                                    },
+                                },
+                                params.row.position === 1 ? '前台頂部': params.row.position === 2 ? '前台中間' : params.row.position === 3 ? '前台底部' : params.row.position === 4 ? '後台頂部' : '後台底部'
+                            )
+                        }                       
                     },
                     {
                         prop: 'status',
@@ -76,9 +93,9 @@
                         render: (h, params) => {
                             return h('fa-icon', {
                                 props:{
-                                    icon: params.row.status === 0 ? faCheckCircle : faTimesCircle,
+                                    icon: faCheckCircle
                                 },
-                                class:params.row.status === 0 ? 'cursor-pointer text-green-600 text-xl' : 'cursor-pointer text-red-600 text-xl',
+                                class:params.row.status === 0 ? 'cursor-pointer text-gray-200 text-xl' : 'cursor-pointer text-green-600 text-xl',
                                 on: {                                    
                                     click: async() => {                                        
                                         const res = await this.changeIconAndUpdate(this.config.modelName, params.row._id, 'status', params.row.status)
@@ -94,41 +111,15 @@
                             },)
                         }
                     },
-                    
+                    {
+                        prop: 'sort',
+                        label: '排序',
+                        align: 'center',
+                        width: 70,
+                        showIcon: true,
+                        icon: 'el-icon-sort',
+                    },
                 ],
-                
-                operates: {                    
-                    list: [ 
-                        {
-                            label: '權限',
-                            type: 'info',
-                            icon: 'el-icon-setting',
-                            plain: true,                            
-                            method: (row) => {
-                                this.handleAuth(row)
-                            }
-                        },
-                        {
-                            label: '編輯',
-                            type: 'warning',
-                            icon: 'el-icon-edit',
-                            plain: true,                            
-                            method: (row) => {
-                                this.handleEdit(row)
-                            }
-                        },
-                        {
-                            label: '删除',
-                            type: 'danger',
-                            icon: 'el-icon-delete',
-                            show: true,
-                            plain: false,                            
-                            method: (row) => {
-                                this.handleDel(row)
-                            }
-                        }
-                    ],                    
-                },
             };
         },
         created() {
@@ -138,14 +129,8 @@
             faCheckCircle() {
                 return faCheckCircle
             },
-            faTimesCircle() {
-                return faTimesCircle
-            },
         },
-        methods: {
-            async handleAuth (row) {
-                this.$router.push(`/admin/managers_Roles/auth/${row._id}`)
-            }
+        methods: {            
         },
         components: {
             dataTable

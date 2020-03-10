@@ -96,6 +96,12 @@ export default {
                     const res = await this.$axios.$delete(`${process.env.EGG_API_URL}/admin/${this.config.serverController}/${row._id}`)
                     if(res.resCode !== 90500) this.handleDataList(this.pagination.pageIndex, this.pagination.pageSize)
                     if(!this.$_.isEmpty(row.imageUrl)) await this.deletImg(row.imageUrl)
+                    if(!this.$_.isEmpty(row.editor_content)) {
+                        let contentImageFolder = ''
+                        if(this.$route.path === '/admin/articles') contentImageFolder = `articleContentImg/${row._id}`
+
+                        await this.deletAllImg(contentImageFolder)
+                    }
                     await this.notifyFunc(res.resCode)
                 }catch (err){
                     //Browser ERROR                    

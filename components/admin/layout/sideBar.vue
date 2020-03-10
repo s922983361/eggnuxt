@@ -34,11 +34,26 @@
             </el-menu-item-group>
         </el-submenu>
         <!-- 管理員功能配置 -->
-        <!------------------------------------------------------------------ 商品配置 -->
+        <!------------------------------------------------------------------ 導航配置 -->
         <el-submenu index="2" v-if="$store.state.auth.is_super">        
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#00ff3b"></i>
-                <span style="color:#ffffff">商品配置</span>
+                <span style="color:#ffffff">導航相關配置</span>
+            </template>
+            <el-menu-item-group>
+                <el-menu-item index="/admin/navs">                
+                    <i class="el-icon-guide"></i>
+                    <span slot="title">NAV 導航(navs)</span>                                
+                </el-menu-item>
+
+            </el-menu-item-group>
+        </el-submenu>
+        <!-- 導航配置 -->
+        <!------------------------------------------------------------------ 商品配置 -->
+        <el-submenu index="3" v-if="$store.state.auth.is_super">        
+            <template slot="title">
+                <i class="el-icon-platform-eleme" style="color:#00ff3b"></i>
+                <span style="color:#ffffff">商品相關配置</span>
             </template>
             <el-menu-item-group>
                 <el-menu-item index="/admin/goods_Colors">                
@@ -53,32 +68,35 @@
                     <i class="el-icon-collection-tag"></i>
                     <span slot="title">商品分類 (goodscate)</span>                                
                 </el-menu-item>
-                
 
             </el-menu-item-group>
         </el-submenu>
         <!-- 商品配置 -->
-        <!------------------------------------------------------------------ 經銷商功能配置 -->
-        <el-submenu index="3" v-if="$store.state.auth.is_super">        
+        <!------------------------------------------------------------------ 文章配置 -->
+        <el-submenu index="4" v-if="$store.state.auth.is_super">        
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#00ff3b"></i>
-                <span style="color:#ffffff">經銷商功能配置</span>
+                <span style="color:#ffffff">文章相關配置</span>
             </template>
             <el-menu-item-group>
-                <el-menu-item index="/admin/login">                
-                    <i class="el-icon-tickets"></i>
-                    <span slot="title">管理員資訊</span>                                
-                </el-menu-item>           
+                <el-menu-item index="/admin/articles_Cates">                
+                    <i class="el-icon-files"></i>
+                    <span slot="title">文章分類(articlecate)</span>                                
+                </el-menu-item>
+                <el-menu-item index="/admin/articles">                
+                    <i class="el-icon-edit-outline"></i>
+                    <span slot="title">文章發布(article)</span>                                
+                </el-menu-item>
                 
 
             </el-menu-item-group>
-        </el-submenu>
-        <!-- 經銷商功能配置 -->
+        </el-submenu>        
+        <!-- 文章配置 -->
         <!------------------------------------------------------------------ 廠商功能 -->
         <el-submenu index="10" v-if="$store.state.auth.is_super || $store.state.auth.role_title === '廠商'"> 
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#0019ff"></i>
-                <span style="color:#ffffff">廠商功能</span>
+                <span style="color:#ffffff">功能列表</span>
             </template>
             <el-menu-item-group>
                 <el-menu-item index="/admin/factory_Brands"> 
@@ -108,7 +126,7 @@
         <el-submenu index="11" v-if="$store.state.auth.is_super || $store.state.auth.role_title === '經銷商'">
             <template slot="title">
                 <i class="el-icon-platform-eleme" style="color:#4bdbf2"></i>
-                <span style="color:#ffffff">經銷商功能</span>
+                <span style="color:#ffffff">功能列表</span>
             </template>
             <el-menu-item-group>
                 <el-menu-item index="/admin/shop_Orders">                
