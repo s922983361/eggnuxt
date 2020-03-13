@@ -50,6 +50,7 @@ module.exports = {
 		{ src: '@/plugins/imgCompress.js', ssr: false },
 		{ src: '@/plugins/nuxt-quill-plugin.js', ssr: false },
 		{ src: '@/plugins/barcode.js', ssr: false },
+		{ src: '@/plugins/vue-scrollto.js', ssr: true },
 	],
 
 	/*
@@ -59,6 +60,9 @@ module.exports = {
 		'@nuxtjs/tailwindcss',
 		'@nuxtjs/fontawesome'
 	],
+	/**
+	 * @desc how to solve @apply in vscode error
+	 * https://www.meidev.co/blog/visual-studio-code-css-linting-with-tailwind/*/
 	//tailwindcss setting
 	purgeCSS: {
 		//保留elment-ui的樣式

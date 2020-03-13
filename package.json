@@ -47,7 +47,8 @@
     "superagent": "^5.2.1",
     "svg-captcha": "^1.4.0",
     "vue-barcode": "^1.2.0",
-    "vue-quill-editor": "^3.0.6"
+    "vue-quill-editor": "^3.0.6",
+    "vue-scrollto": "^2.17.1"
   },
   "devDependencies": {
     "@fortawesome/free-brands-svg-icons": "^5.12.0",
