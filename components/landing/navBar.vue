@@ -26,7 +26,7 @@
                             class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold" href="#"
                             @click="showMenu = !showMenu"
                             v-scroll-to="{ 
-                                el: '#ProductCate',
+                                el: '#Feature',
                                 easing: [.6, .80, .30, 1.9],
                                 duration: 2000,
                                 offset: -63
@@ -40,7 +40,7 @@
                             class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold" href="#"
                             @click="showMenu = !showMenu"
                             v-scroll-to="{ 
-                                el: '#Company',
+                                el: '#User',
                                 easing: [.6, .80, .30, 1.9],
                                 duration: 2000,
                                 offset: -63
@@ -54,7 +54,21 @@
                             class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold" href="#"
                             @click="showMenu = !showMenu"
                             v-scroll-to="{ 
-                                el: '#News',
+                                el: '#Shop',
+                                easing: [.6, .80, .30, 1.9],
+                                duration: 2000,
+                                offset: -63 
+                            }"
+                            >
+                            <fa-icon :icon="faFileAlt" class="lg:text-gray-300 text-gray-500 text-lg leading-lg mr-2"></fa-icon> Docs</a>
+                            
+                    </li>
+                    <li class="flex items-center hover:bg-orange-400">
+                        <a 
+                            class="lg:text-white lg:hover:text-gray-300 text-gray-800 px-3 py-4 lg:py-2 flex items-center text-xs uppercase font-bold" href="#"
+                            @click="showMenu = !showMenu"
+                            v-scroll-to="{ 
+                                el: '#Factory',
                                 easing: [.6, .80, .30, 1.9],
                                 duration: 2000,
                                 offset: -63 
@@ -94,7 +108,7 @@
                             type="button"
                             style="transition: all 0.15s ease 0s;"
                             >
-                            <nuxt-link to="/web">
+                            <nuxt-link to="/store">
                                 <fa-icon :icon="faHandPointRight" class="text-lg"></fa-icon> &nbsp; 進入採購中心
                             </nuxt-link>
                             </button>
@@ -137,11 +151,11 @@
             },
             handlescroll(e) {
                 this.scrollTop = document.documentElement.scrollTop || window.pageYOffset || document.body.scrollTop
-                if(this.scrollTop > 350) {
+                if(this.scrollTop > 270) {
                     this.isScrollTop = true
                     this.$emit('handleBackToTop', true)
                 }
-                if(this.scrollTop < 350) {
+                if(this.scrollTop < 270) {
                     this.isScrollTop = false
                     this.$emit('handleBackToTop', false)
                 }

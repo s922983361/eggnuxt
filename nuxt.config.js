@@ -24,7 +24,12 @@ module.exports = {
 			{ hid: 'description', name: 'description', content: process.env.npm_package_description || '' }
 		],
 		link: [
-			{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+			{ rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+			//Google Free Chinese Font-family , it is neccessary to use global CSS Link, Do not use "webfontloader"
+			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/earlyaccess/cwtexkai.css' }, //Google楷體
+			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/earlyaccess/cwtexyen.css' }, //Google圓體
+			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/earlyaccess/cwtexfangsong.css' },//Google仿宋體
+			{ rel: 'stylesheet', href: 'https://fonts.googleapis.com/earlyaccess/cwtexming.css' },//Google明體
 		]
 	},
 
@@ -50,7 +55,10 @@ module.exports = {
 		{ src: '@/plugins/imgCompress.js', ssr: false },
 		{ src: '@/plugins/nuxt-quill-plugin.js', ssr: false },
 		{ src: '@/plugins/barcode.js', ssr: false },
-		{ src: '@/plugins/vue-scrollto.js', ssr: true },
+		{ src: '@/plugins/vue-scrollto.js', ssr: false },
+		{ src: '@/plugins/vue-owl-carousel.js', ssr: false },
+		{ src: '@/plugins/vue-lazyload.js', ssr: true },
+		{ src: '@/plugins/vue-slick.js', ssr: false },
 	],
 
 	/*
@@ -94,7 +102,6 @@ module.exports = {
 		'@nuxtjs/sitemap',
 		'@nuxtjs/robots',
 		'nuxt-vuex-router-sync',
-		'nuxt-imagemin',
 		'nuxt-webfontloader',
 		'nuxt-maintenance-mode',
 		'nuxt-mq',
@@ -148,16 +155,7 @@ module.exports = {
 		UserAgent: '*',
 		Disallow: '/'
 	},
-
-	/*
-	** Imagemin module configuration
-	** See https://www.npmjs.com/package/nuxt-imagemin
-	*/
-	imagemin: {
-		optipng: { optimizationLevel: 5 },
-		gifsicle: { optimizationLevel: 2 }
-	},
-
+	
 	/*
 	** Webfontloader module configuration
 	** See https://www.npmjs.com/package/nuxt-webfontloader
@@ -166,12 +164,13 @@ module.exports = {
 		google: {
 			//See https://www.ctolib.com/Developmint-nuxt-webfontloader.html
 			//See https://developers.google.com/fonts/docs/getting_started
+			//See https://www.oxxostudio.tw/articles/201811/css-font-family.html
 			//See https://www.npmjs.com/package/webfontloader
 			families: [
 				'Lato:n4,i4,n7,i7',
 				'Noto Serif TC:n4,n7',
 				'Noto Sans TC:n4,n7',
-				'Playfair Display:n4,i4,n7,i7'
+				'Playfair Display:n4,i4,n7,i7',
 			],
 			urls: [
 				// for each Google Fonts add url + options you want
@@ -179,7 +178,8 @@ module.exports = {
 				'https://fonts.googleapis.com/css?family=Lato:400,400i,700,700i&display=swap',
 				'https://fonts.googleapis.com/css?family=Noto+Serif+TC:400,700&display=swap',
 				'https://fonts.googleapis.com/css?family=Noto+Sans+TC:400,700&display=swap',
-				'https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i&display=swap'
+				'https://fonts.googleapis.com/css?family=Playfair+Display:400,400i,700,700i&display=swap',
+
 			]
 		}
 	},
@@ -237,9 +237,16 @@ module.exports = {
 		/*
 		** You can extend webpack config here
 		*/
-		extend (config, ctx) {
+		extend (config, {isServer}, ctx) {
 			config.node = {
 				fs: 'empty'
+			}
+			if (isServer) {
+				config.externals = [
+					require('webpack-node-externals')({
+						whitelist: [/^vue-slick/]
+					})
+				]
 			}
 		},
 		plugins: [
