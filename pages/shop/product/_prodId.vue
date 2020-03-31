@@ -327,8 +327,8 @@
     import { faEye, faShoppingCart, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
     import '~/node_modules/slick-carousel/slick/slick.css'
     export default {
-        layout: 'store',
-        name:'store-product-prodId',
+        layout: 'shop',
+        scrollToTop: true,
         data () {
             return {
                 textarea:'',

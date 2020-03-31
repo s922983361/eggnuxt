@@ -1,5 +1,6 @@
 <template>
-    <div id="products_List" class="p-4 bg-gray-200">
+    <div id="shopProdCard" class="p-4">
+        <slot name="cateTitle"></slot>
         <div class="flex flex-wrap">
             <div class="w-full md:w-1/2 lg:w-1/3 mt-4 p-2" v-for="item in goodsData" :key="item.sn">
 
@@ -34,21 +35,25 @@
                                     <p class="inline-block text-red-600 text-3xl font-black">{{ item.special_price }}</p>
                                 </span>
                             </div>
-                            <div class="flex items-center">
-                                <svg v-for="i in 5" :key="i" viewBox="0 0 24 24" :class="i <= item.rating ? 'text-teal-500' : 'text-gray-400'" class="h-4 w-4 fill-current">   
-                                <path d="M8.128 19.825a1.586 1.586 0 0 1-1.643-.117 1.543 1.543 0 0 1-.53-.662 1.515 1.515 0 0 1-.096-.837l.736-4.247-3.13-3a1.514 1.514 0 0 1-.39-1.569c.09-.271.254-.513.475-.698.22-.185.49-.306.776-.35L8.66 7.73l1.925-3.862c.128-.26.328-.48.577-.633a1.584 1.584 0 0 1 1.662 0c.25.153.45.373.577.633l1.925 3.847 4.334.615c.29.042.562.162.785.348.224.186.39.43.48.704a1.514 1.514 0 0 1-.404 1.58l-3.13 3 .736 4.247c.047.282.014.572-.096.837-.111.265-.294.494-.53.662a1.582 1.582 0 0 1-1.643.117l-3.865-2-3.865 2z" />
-                                </svg>
-                                <span class="border-l-2 border-gray-500 ml-4 pl-4 text-teal-500">
+                            <div class="flex items-center text-xs">
+                                <!-- <svg 
+                                    v-for="i in 5" :key="i" viewBox="0 0 24 24" 
+                                    :class="i <= item.rating ? 'text-teal-500' : 'text-gray-400'" 
+                                    class="h-4 w-4 fill-current">   
+                                        <path d="M8.128 19.825a1.586 1.586 0 0 1-1.643-.117 1.543 1.543 0 0 1-.53-.662 1.515 1.515 0 0 1-.096-.837l.736-4.247-3.13-3a1.514 1.514 0 0 1-.39-1.569c.09-.271.254-.513.475-.698.22-.185.49-.306.776-.35L8.66 7.73l1.925-3.862c.128-.26.328-.48.577-.633a1.584 1.584 0 0 1 1.662 0c.25.153.45.373.577.633l1.925 3.847 4.334.615c.29.042.562.162.785.348.224.186.39.43.48.704a1.514 1.514 0 0 1-.404 1.58l-3.13 3 .736 4.247c.047.282.014.572-.096.837-.111.265-.294.494-.53.662a1.582 1.582 0 0 1-1.643.117l-3.865-2-3.865 2z" 
+                                        />
+                                    </svg> -->
+                                <span class="text-teal-500">
                                     {{ item.click_count }}<fa-icon :icon="faEye" class="ml-2"></fa-icon>
                                 </span>
-                                <span class="border-l-2 border-gray-500 ml-4 pl-4 text-teal-500">
+                                <span class="border-l-2 border-gray-500 ml-2 pl-2 text-teal-500">
                                     {{ item.click_count }}<fa-icon :icon="faShoppingBag" class="ml-2"></fa-icon>
                                 </span>
                             </div>
                             <!-- <div class='p-2 text-white bg-orange-500 rounded-lg m-2 font-serif'>商品詳情</div> -->
                             <div 
                                 class="absolute bottom-0 right-0 -mb-4 p-2 cursor-pointer"
-                                @click="$router.push(`/store/product/${item._id}`)"
+                                @click="$router.push(`/shop/product/${item._id}`)"
                                 >                                
                                 <div class="inline-flex items-center bg-white leading-none text-pink-600 rounded-full px-2  py-1 shadow text-sm  border hover:border-indigo-600">
                                     <span class="inline-flex bg-indigo-600 text-white rounded-full h-6 px-3 justify-center items-center">
@@ -62,29 +67,12 @@
                 </div>
             </div>
         </div>
-        
-        <div class="flex justify-end mt-8">
-            <div class="inline-block border-t-2 border-b-2 border-gray-400 py-4">
-                <el-pagination
-                    background
-                    hide-on-single-page
-                    prev-text="prev"
-                    next-text="next"
-                    layout="prev, pager, next"
-                    :total="1000"
-                    >
-                    </el-pagination>
-            </div>            
-        </div>
     </div>
 </template>
 
 <script>
-
     import { faEye, faShoppingCart, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
     export default {
-        layout: 'store',
-        name:'store-product_List-cateId',
         data () {
             return {
                 goodsData: [

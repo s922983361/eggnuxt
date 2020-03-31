@@ -108,7 +108,7 @@
                             type="button"
                             style="transition: all 0.15s ease 0s;"
                             >
-                            <nuxt-link to="/store">
+                            <nuxt-link to="/shop">
                                 <fa-icon :icon="faHandPointRight" class="text-lg"></fa-icon> &nbsp; 進入採購中心
                             </nuxt-link>
                             </button>

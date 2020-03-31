@@ -10,7 +10,7 @@ module.exports = {
 		IMG_PATH: `${process.env.BASE_URL}/uplods/`		
 	},
 	router: {
-		middleware: []
+		middleware: [],		
 	},
 	
 	/*
@@ -72,6 +72,11 @@ module.exports = {
 	 * @desc how to solve @apply in vscode error
 	 * https://www.meidev.co/blog/visual-studio-code-css-linting-with-tailwind/*/
 	//tailwindcss setting
+	tailwindcss: {		
+		purgeCSSInDev: false,
+		exposeConfig: true
+	},
+	//tailwindcss purgeCSS setting
 	purgeCSS: {
 		//保留elment-ui的樣式
 		whitelistPatternsChildren: [/^el-/],

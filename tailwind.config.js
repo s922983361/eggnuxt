@@ -6,6 +6,14 @@
 */
 module.exports = {
     theme: {
+        extend: {
+            spacing: {                
+                '72': '18rem',
+                '80': '20rem',
+                '84': '21rem',
+                '88': '22rem',
+            },
+        },
         fontFamily: {
             'sans': ['Helvetica', 'Arial', '微軟正黑體', 'STHeiti ', 'sans-serif'],
             'serif': ['Georgia', 'Cambria', 'PMingLiU', 'PingFang', 'serif'],
@@ -19,7 +27,7 @@ module.exports = {
             'md': '768px',// => @media (min-width: 768px) { ... }
             'lg': '1024px',// => @media (min-width: 1024px) { ... }
             'xl': '1280px',// => @media (min-width: 1280px) { ... }
-        },
+        },        
     },
     variants: {
         backgroundColor: ['responsive', 'hover', 'focus', 'active']
