@@ -200,12 +200,76 @@
                         </div>
                     </el-tab-pane>
                     <el-tab-pane label="商品規格參數">
-                        <div class="p-4">
-                            <div
-                                v-for="i in 5" :key="i"
-                                class="flex w-full text-md py-2 mb-1 font-sans border-b border-gray-300" >
-                                <div class="w-1/3 md:w-1/6 py-2 bg-teal-200 rounded-full text-center ">標題參數&nbsp;&nbsp;:</div>
-                                <div class="W-2/3 md:w-5/6 py-2 pl-6 text-gray-700 ">參數內容</div>
+                        <div class="p-4">                            
+                            <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+                                <div class="flex px-4 py-5 border-b border-gray-200 sm:px-6">
+                                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-teal-100 md:w-14 md:h-14">
+                                        <fa-icon :icon="faCogs" class="text-teal-600 text-md md:text-xl"></fa-icon>
+                                    </div>
+                                    <div class="inline-block ml-4 mt-2">
+                                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                                        商品規格以及其他特殊參數
+                                        </h3>
+                                        <p class="mt-1 max-w-2xl text-sm leading-5 text-gray-500">
+                                        Personal details and application.
+                                        </p>
+                                    </div>                                    
+                                </div>
+                                <div>
+                                    <dl>
+                                        <div class="bg-gray-100 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-blue-100">
+                                            <dt class="text-sm leading-5 font-medium text-gray-500">
+                                            是否防水
+                                            </dt>
+                                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                            是
+                                            </dd>
+                                        </div>
+                                        <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 hover:bg-blue-100">
+                                            <dt class="text-sm leading-5 font-medium text-gray-500">夾具</dt>
+                                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">文書夾</dd>
+                                        </div>                                        
+                                        <!-- <div class="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                                            <dt class="text-sm leading-5 font-medium text-gray-500">
+                                            Attachments
+                                            </dt>
+                                            <dd class="mt-1 text-sm leading-5 text-gray-900 sm:mt-0 sm:col-span-2">
+                                            <ul class="border border-gray-200 rounded-md">
+                                                <li class="pl-3 pr-4 py-3 flex items-center justify-between text-sm leading-5">
+                                                <div class="w-0 flex-1 flex items-center">
+                                                    <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                                                    </svg>
+                                                    <span class="ml-2 flex-1 w-0 truncate">
+                                                    resume_back_end_developer.pdf
+                                                    </span>
+                                                </div>
+                                                <div class="ml-4 flex-shrink-0">
+                                                    <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
+                                                    Download
+                                                    </a>
+                                                </div>
+                                                </li>
+                                                <li class="border-t border-gray-200 pl-3 pr-4 py-3 flex items-center justify-between text-sm leading-5">
+                                                    <div class="w-0 flex-1 flex items-center">
+                                                        <svg class="flex-shrink-0 h-5 w-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fill-rule="evenodd" d="M8 4a3 3 0 00-3 3v4a5 5 0 0010 0V7a1 1 0 112 0v4a7 7 0 11-14 0V7a5 5 0 0110 0v4a3 3 0 11-6 0V7a1 1 0 012 0v4a1 1 0 102 0V7a3 3 0 00-3-3z" clip-rule="evenodd"/>
+                                                        </svg>
+                                                        <span class="ml-2 flex-1 w-0 truncate">
+                                                        coverletter_back_end_developer.pdf
+                                                        </span>
+                                                    </div>
+                                                    <div class="ml-4 flex-shrink-0">
+                                                        <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500 transition duration-150 ease-in-out">
+                                                        Download
+                                                        </a>
+                                                    </div>
+                                                </li>
+                                            </ul>
+                                            </dd>
+                                        </div> -->
+                                    </dl>
+                                </div>
                             </div>
                         </div>
                     </el-tab-pane>
@@ -286,9 +350,14 @@
                 </el-tabs>
             </section>
             <section class="mayLike container mx-auto p-4 w-full">
-                <div class="lg:text-center my-4 border-b border-gray-300 pb-4">
-                    <p class="mt-2 max-w-3xl text-xl leading-7 text-black lg:mx-auto">
+                <div class="flex item-cemter justify-center my-4 border-b border-gray-300 pb-4 mx-auto">
+                    <div class="flex items-center justify-center h-12 w-12 rounded-full bg-indigo-100 md:w-14 md:h-14">
+                        <fa-icon :icon="faThumbsUp" class="text-indigo-600 text-md md:text-xl"></fa-icon>
+                    </div>
+                    <div class="ml-4 mt-3">
+                        <p class="max-w-3xl text-xl leading-7 text-black">
                         你也許會喜歡</p>
+                    </div> 
                 </div>
                 <!----------------------------------------------------------- strat Like product wrapper -->
                 <div >
@@ -324,7 +393,7 @@
 </template>
 
 <script>
-    import { faEye, faShoppingCart, faShoppingBag } from '@fortawesome/free-solid-svg-icons'
+    import { faEye, faShoppingCart, faShoppingBag, faCogs, faThumbsUp } from '@fortawesome/free-solid-svg-icons'
     import '~/node_modules/slick-carousel/slick/slick.css'
     export default {
         layout: 'shop',
@@ -410,7 +479,9 @@
             };
         },
         computed: {
+            faCogs() { return faCogs },
             faEye() { return faEye },
+            faThumbsUp() { return faThumbsUp },
             faShoppingBag() { return faShoppingBag },
             faShoppingCart() { return faShoppingCart },
         },
