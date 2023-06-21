@@ -35,7 +35,7 @@
     "koa-router": "^7.4.0",
     "koa-session": "^5.12.3",
     "lodash": "^4.17.15",
-    "nuxt": "^2.0.0",
+    "nuxt": "^3.4.3",
     "nuxt-maintenance-mode": "^0.3.0",
     "nuxt-mq": "^2.0.1",
     "nuxt-social-meta": "0.0.1",
